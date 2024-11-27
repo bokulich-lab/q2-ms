@@ -5,7 +5,7 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-
+from q2_types.sample_data import SampleData
 from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
@@ -27,7 +27,7 @@ plugin.register_semantic_types(
     mzML,
 )
 
-plugin.register_semantic_type_to_format(mzML, artifact_format=mzMLDirFmt)
+plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
 
 plugin.register_formats(
     mzMLFormat,

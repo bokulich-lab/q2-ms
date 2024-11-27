@@ -5,6 +5,9 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import os
+import sys
+
 import pymzml
 from qiime2.core.exceptions import ValidationError
 from qiime2.plugin import model
@@ -13,11 +16,14 @@ from qiime2.plugin import model
 class mzMLFormat(model.TextFileFormat):
     def _validate(self, n_records=None):
         try:
-            run = pymzml.run.Reader(str(self))
-            for _ in run:
-                pass
+            # Suppressing warning print "Not index found and build_index_from_scratch
+            # is False". This could also be solved with setting build_index_from_scratch
+            # to True but this builds the index and slows down validation.
+            sys.stdout = open(os.devnull, "w")
+            pymzml.run.Reader(str(self))
+            sys.stdout = sys.__stdout__
         except Exception as e:
-            raise ValidationError(f"File is not a valid mzML format: {e}")
+            raise ValidationError(e)
 
     def _validate_(self, level):
         self._validate()
