@@ -27,7 +27,7 @@ test:
     - pytest-cov
   imports:
     - q2_ms
-    - qiime2.plugins.moshpit
+    - qiime2.plugins.ms
   commands:
     - pytest --cov q2_ms --cov-report xml:coverage.xml --pyargs q2_ms
 
