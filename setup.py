@@ -10,9 +10,7 @@ from setuptools import find_packages, setup
 
 import versioneer
 
-description = (
-    "Plugin template."
-)
+description = "Plugin template."
 
 setup(
     name="q2-ms",
@@ -24,12 +22,7 @@ setup(
     author_email="rischv@ethz.ch",
     description=description,
     url="https://github.com/bokulich-lab/q2-ms",
-    entry_points={
-        "qiime2.plugins": [
-            "q2_ms="
-            "q2_ms"
-            ".plugin_setup:plugin"]
-    },
+    entry_points={"qiime2.plugins": ["q2_ms=q2_ms.plugin_setup:plugin"]},
     package_data={
         "q2_ms": ["citations.bib"],
         "q2_ms.tests": ["data/*"],
