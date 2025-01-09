@@ -1,9 +1,6 @@
-{% set data = load_setup_py_data() %}
-{% set version = data.get('version') or 'placehold' %}
-
 package:
   name: q2-ms
-  version: {{ version }}
+  version: {{ PLUGIN_VERSION }}
 
 source:
   path: ..
@@ -15,6 +12,12 @@ requirements:
   host:
     - python {{ python }}
     - setuptools
+    - versioningit
+    - wheel
+
+  build:
+    - setuptools
+    - versioningit
 
   run:
     - qiime2 {{ qiime2_epoch }}.*
@@ -23,13 +26,12 @@ requirements:
 
 test:
   requires:
-    - coverage
-    - pytest-cov
+    - parameterized
   imports:
     - q2_ms
     - qiime2.plugins.ms
   commands:
-    - pytest --cov q2_ms --cov-report xml:coverage.xml --pyargs q2_ms
+    - pytest --pyargs q2_ms
 
 about:
   home: https://github.com/bokulich-lab/q2-ms
