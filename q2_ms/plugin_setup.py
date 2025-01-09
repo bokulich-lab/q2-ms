@@ -18,8 +18,8 @@ plugin = Plugin(
     version=__version__,
     website="https://github.com/bokulich-lab/q2-ms",
     package="q2_ms",
-    description="A qiime2 plugin for MS data processing.",
-    short_description="A qiime2 plugin for MS data processing.",
+    description="A QIIME 2 plugin for MS data processing.",
+    short_description="A QIIME 2 plugin for MS data processing.",
 )
 
 # Registrations
