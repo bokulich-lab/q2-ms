@@ -88,3 +88,21 @@ class MSBackendDataFormat(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class MSExperimentLinkMColsFormat(model.TextFileFormat):
+    def _validate(self):
+        with open(str(self), "r") as file:
+            first_line = file.readline().strip()
+
+        if first_line != '"subsetBy"':
+            raise ValidationError(
+                "Header does not match MSExperimentLinkMColsFormat. It must "
+                "consist of the following line:\n"
+                '"subsetBy"\n\n'
+                "Found instead:\n"
+                f"{first_line}"
+            )
+
+    def _validate_(self, level):
+        self._validate()
