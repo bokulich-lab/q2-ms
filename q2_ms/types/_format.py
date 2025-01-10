@@ -169,3 +169,37 @@ class SpectraProcessingQueueFormat(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class SpectraSlotsFormat(model.TextFileFormat):
+    def _validate(self):
+        expected_keys = {
+            "processingQueueVariables",
+            "processing",
+            "processingChunkSize",
+            "backend",
+        }
+
+        with self.open() as file:
+            lines = file.readlines()
+
+        keys = set()
+        for line in lines:
+            if "=" not in line:
+                continue
+
+            key = line.split("=", 1)[0].strip()
+            keys.add(key)
+
+        if keys != expected_keys:
+            raise ValidationError(
+                "File does not match SpectraSlotsFormat. "
+                "File must have the following structure:\n"
+                "processingQueueVariables = ...\n"
+                "processing = ...\n"
+                "processingChunkSize = ...\n"
+                "backend = ...\n"
+            )
+
+    def _validate_(self, level):
+        self._validate()
