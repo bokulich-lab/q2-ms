@@ -19,12 +19,12 @@ class TestMSTypesAndFormats(TestPluginBase):
         format.validate()
 
     def test_mzml_format_validate_positive(self):
-        filepath = self.get_data_path("mzML_valid/tiny.mzml")
+        filepath = self.get_data_path("mzML_valid/tiny.mzML")
         format = mzMLFormat(filepath, mode="r")
         format.validate()
 
     def test_mzml_format_validate_negative(self):
-        filepath = self.get_data_path("mzML_invalid/invalid.mzml")
+        filepath = self.get_data_path("mzML_invalid/invalid.mzML")
         format = mzMLFormat(filepath, mode="r")
         with self.assertRaises(ValidationError):
             format.validate()
