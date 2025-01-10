@@ -120,3 +120,22 @@ class MSExperimentSampleDataLinksSpectra(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class MSExperimentSampleDataFormat(model.TextFileFormat):
+    def _validate(self):
+        header_exp = ["sample_name", "sample_group", "spectraOrigin"]
+
+        header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
+
+        if header_exp != header_obs:
+            raise ValidationError(
+                "Header does not match MSExperimentSampleDataFormat. It must "
+                "consist of the following columns:\n"
+                + ", ".join(header_exp)
+                + "\n\nFound instead:\n"
+                + ", ".join(header_obs)
+            )
+
+    def _validate_(self, level):
+        self._validate()
