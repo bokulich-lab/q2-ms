@@ -281,3 +281,21 @@ class XCMSExperimentFeatureDefinitionsFormat(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class XCMSExperimentFeaturePeakIndexFormat(model.TextFileFormat):
+    def _validate(self):
+        header_exp = ["feature_index", "peak_index"]
+        header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
+
+        if header_exp != header_obs:
+            raise ValidationError(
+                "Header does not match XCMSExperimentFeaturePeakIndexFormat. It must "
+                "consist of the following columns:\n"
+                + ", ".join(header_exp)
+                + "\n\nFound instead:\n"
+                + ", ".join(header_obs)
+            )
+
+    def _validate_(self, level):
+        self._validate()
