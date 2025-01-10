@@ -16,6 +16,7 @@ from q2_ms.types._format import (
     SpectraSlotsFormat,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
+    XCMSExperimentDirFmt,
     XCMSExperimentFeatureDefinitionsFormat,
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
@@ -186,3 +187,8 @@ class TestXCMSExperimentFormats(TestPluginBase):
         format = XCMSExperimentFeaturePeakIndexFormat(filepath, mode="r")
         with self.assertRaises(ValidationError):
             format.validate()
+
+    def test_xcms_experiment_dir_fmt_positive(self):
+        filepath = self.get_data_path("XCMSExperiment")
+        format = XCMSExperimentDirFmt(filepath, mode="r")
+        format.validate()

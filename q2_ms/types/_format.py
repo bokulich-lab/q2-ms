@@ -299,3 +299,55 @@ class XCMSExperimentFeaturePeakIndexFormat(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class XCMSExperimentDirFmt(model.DirectoryFormat):
+    ms_backend_data = model.File(
+        pathspec="ms_backend_data.txt",
+        format=MSBackendDataFormat,
+    )
+    ms_experiment_link_mcols = model.File(
+        pathspec="ms_experiment_link_mcols.txt",
+        format=MSExperimentLinkMColsFormat,
+    )
+    ms_experiment_sample_data_links_spectra = model.File(
+        pathspec="ms_experiment_sample_data_links_spectra.txt",
+        format=MSExperimentSampleDataLinksSpectra,
+    )
+    ms_experiment_sample_data = model.File(
+        pathspec="ms_experiment_sample_data.txt",
+        format=MSExperimentSampleDataFormat,
+    )
+    spectra_processing_queue = model.File(
+        pathspec="spectra_processing_queue.json",
+        format=XCMSExperimentJSONFormat,
+    )
+    spectra_slots = model.File(
+        pathspec="spectra_slots.txt",
+        format=SpectraSlotsFormat,
+    )
+    xcms_experiment_process_history = model.File(
+        pathspec="xcms_experiment_process_history.json",
+        format=XCMSExperimentJSONFormat,
+        optional=True,
+    )
+    xcms_experiment_chrom_peak_data = model.File(
+        pathspec="xcms_experiment_chrom_peak_data.txt",
+        format=XCMSExperimentChromPeakDataFormat,
+        optional=True,
+    )
+    xcms_experiment_chrom_peaks = model.File(
+        pathspec="xcms_experiment_chrom_peaks.txt",
+        format=XCMSExperimentChromPeaksFormat,
+        optional=True,
+    )
+    xcms_experiment_feature_definitions = model.File(
+        pathspec="xcms_experiment_feature_definitions.txt",
+        format=XCMSExperimentFeatureDefinitionsFormat,
+        optional=True,
+    )
+    xcms_experiment_feature_peak_index = model.File(
+        pathspec="xcms_experiment_feature_peak_index.txt",
+        format=XCMSExperimentFeaturePeakIndexFormat,
+        optional=True,
+    )
