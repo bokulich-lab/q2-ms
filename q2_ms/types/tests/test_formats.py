@@ -13,10 +13,10 @@ from q2_ms.types._format import (
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
-    SpectraProcessingQueueFormat,
     SpectraSlotsFormat,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
+    XCMSExperimentJSONFormat,
     mzMLDirFmt,
     mzMLFormat,
 )
@@ -90,14 +90,21 @@ class TestXCMSExperimentFormats(TestPluginBase):
         with self.assertRaises(ValidationError):
             format.validate()
 
-    def test_spectra_processing_queue_validate_positive(self):
+    def test_xcms_experiment_json_queue_validate_positive(self):
         filepath = self.get_data_path("XCMSExperiment/spectra_processing_queue.json")
-        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        format = XCMSExperimentJSONFormat(filepath, mode="r")
+        format.validate()
+
+    def test_xcms_experiment_json_history_validate_positive(self):
+        filepath = self.get_data_path(
+            "XCMSExperiment/xcms_experiment_process_history.json"
+        )
+        format = XCMSExperimentJSONFormat(filepath, mode="r")
         format.validate()
 
     def test_spectra_processing_queue_validate_negative_json(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
-        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        format = XCMSExperimentJSONFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "JSON"):
             format.validate()
 
@@ -105,7 +112,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
         filepath = self.get_data_path(
             "XCMSExperiment_extra/spectra_processing_queue_list_check.json"
         )
-        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        format = XCMSExperimentJSONFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "list"):
             format.validate()
 
@@ -113,7 +120,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
         filepath = self.get_data_path(
             "XCMSExperiment_extra/spectra_processing_queue_keys_check.json"
         )
-        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        format = XCMSExperimentJSONFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "keys"):
             format.validate()
 

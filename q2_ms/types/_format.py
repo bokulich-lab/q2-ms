@@ -142,7 +142,7 @@ class MSExperimentSampleDataFormat(model.TextFileFormat):
         self._validate()
 
 
-class SpectraProcessingQueueFormat(model.TextFileFormat):
+class XCMSExperimentJSONFormat(model.TextFileFormat):
     def _validate(self):
         try:
             with self.open() as file:
@@ -151,7 +151,7 @@ class SpectraProcessingQueueFormat(model.TextFileFormat):
 
             if not isinstance(data, list):
                 raise ValidationError(
-                    "File does not match SpectraProcessingQueueFormat. "
+                    "File does not match XCMSExperimentJSONFormat. "
                     "The root element must be a list."
                 )
 
@@ -160,7 +160,7 @@ class SpectraProcessingQueueFormat(model.TextFileFormat):
             required_keys = {"type", "attributes", "value"}
             if not required_keys.issubset(parsed_item.keys()):
                 raise ValidationError(
-                    "File does not match SpectraProcessingQueueFormat. "
+                    "File does not match XCMSExperimentJSONFormat. "
                     "JSON object must contain the keys: " + ", ".join(required_keys)
                 )
 
