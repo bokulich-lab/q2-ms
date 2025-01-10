@@ -13,6 +13,7 @@ from q2_ms.types._format import (
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    SpectraProcessingQueueFormat,
     mzMLDirFmt,
     mzMLFormat,
 )
@@ -84,4 +85,31 @@ class TestXCMSExperimentFormats(TestPluginBase):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = MSExperimentSampleDataFormat(filepath, mode="r")
         with self.assertRaises(ValidationError):
+            format.validate()
+
+    def test_spectra_processing_queue_validate_positive(self):
+        filepath = self.get_data_path("XCMSExperiment/spectra_processing_queue.json")
+        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        format.validate()
+
+    def test_spectra_processing_queue_validate_negative_json(self):
+        filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
+        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "JSON"):
+            format.validate()
+
+    def test_spectra_processing_queue_validate_negative_list(self):
+        filepath = self.get_data_path(
+            "XCMSExperiment_extra/spectra_processing_queue_list_check.json"
+        )
+        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "list"):
+            format.validate()
+
+    def test_spectra_processing_queue_validate_negative_keys(self):
+        filepath = self.get_data_path(
+            "XCMSExperiment_extra/spectra_processing_queue_keys_check.json"
+        )
+        format = SpectraProcessingQueueFormat(filepath, mode="r")
+        with self.assertRaisesRegex(ValidationError, "keys"):
             format.validate()

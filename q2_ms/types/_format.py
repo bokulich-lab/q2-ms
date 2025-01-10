@@ -5,6 +5,7 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import json
 import os
 import sys
 
@@ -136,6 +137,35 @@ class MSExperimentSampleDataFormat(model.TextFileFormat):
                 + "\n\nFound instead:\n"
                 + ", ".join(header_obs)
             )
+
+    def _validate_(self, level):
+        self._validate()
+
+
+class SpectraProcessingQueueFormat(model.TextFileFormat):
+    def _validate(self):
+        try:
+            with self.open() as file:
+                content = file.read()
+            data = json.loads(content)
+
+            if not isinstance(data, list):
+                raise ValidationError(
+                    "File does not match SpectraProcessingQueueFormat. "
+                    "The root element must be a list."
+                )
+
+            parsed_item = json.loads(data[0])
+
+            required_keys = {"type", "attributes", "value"}
+            if not required_keys.issubset(parsed_item.keys()):
+                raise ValidationError(
+                    "File does not match SpectraProcessingQueueFormat. "
+                    "JSON object must contain the keys: " + ", ".join(required_keys)
+                )
+
+        except json.JSONDecodeError as e:
+            raise ValidationError(f"File is not valid JSON: {e}")
 
     def _validate_(self, level):
         self._validate()
