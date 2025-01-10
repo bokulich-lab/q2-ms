@@ -17,6 +17,7 @@ from q2_ms.types._format import (
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
     XCMSExperimentFeatureDefinitionsFormat,
+    XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
     mzMLDirFmt,
     mzMLFormat,
@@ -170,5 +171,18 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_feature_definitions_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentFeatureDefinitionsFormat(filepath, mode="r")
+        with self.assertRaises(ValidationError):
+            format.validate()
+
+    def test_xcms_experiment_feature_peak_index_positive(self):
+        filepath = self.get_data_path(
+            "XCMSExperiment/xcms_experiment_feature_peak_index.txt"
+        )
+        format = XCMSExperimentFeaturePeakIndexFormat(filepath, mode="r")
+        format.validate()
+
+    def test_xcms_experiment_feature_peak_index_negative(self):
+        filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
+        format = XCMSExperimentFeaturePeakIndexFormat(filepath, mode="r")
         with self.assertRaises(ValidationError):
             format.validate()
