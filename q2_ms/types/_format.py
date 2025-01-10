@@ -106,3 +106,17 @@ class MSExperimentLinkMColsFormat(model.TextFileFormat):
 
     def _validate_(self, level):
         self._validate()
+
+
+class MSExperimentSampleDataLinksSpectra(model.TextFileFormat):
+    def _validate(self):
+        first_line = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
+
+        if len(first_line) != 2:
+            raise ValidationError(
+                "File does not match MSExperimentLinkMColsFormat. "
+                "It must consist of exactly two columns."
+            )
+
+    def _validate_(self, level):
+        self._validate()
