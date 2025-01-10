@@ -11,6 +11,7 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_ms.types._format import (
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
+    MSExperimentSampleDataLinksSpectra,
     mzMLDirFmt,
     mzMLFormat,
 )
@@ -57,5 +58,18 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_ms_experiment_link_mcols_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = MSExperimentLinkMColsFormat(filepath, mode="r")
+        with self.assertRaises(ValidationError):
+            format.validate()
+
+    def test_ms_experiment_sample_data_links_spectra_validate_positive(self):
+        filepath = self.get_data_path(
+            "XCMSExperiment/ms_experiment_sample_data_links_spectra.txt"
+        )
+        format = MSExperimentSampleDataLinksSpectra(filepath, mode="r")
+        format.validate()
+
+    def test_ms_experiment_sample_data_links_spectra_validate_negative(self):
+        filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
+        format = MSExperimentSampleDataLinksSpectra(filepath, mode="r")
         with self.assertRaises(ValidationError):
             format.validate()
