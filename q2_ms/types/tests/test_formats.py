@@ -14,6 +14,7 @@ from q2_ms.types._format import (
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
     SpectraProcessingQueueFormat,
+    SpectraSlotsFormat,
     mzMLDirFmt,
     mzMLFormat,
 )
@@ -112,4 +113,15 @@ class TestXCMSExperimentFormats(TestPluginBase):
         )
         format = SpectraProcessingQueueFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "keys"):
+            format.validate()
+
+    def test_spectra_slots_validate_positive(self):
+        filepath = self.get_data_path("XCMSExperiment/spectra_slots.txt")
+        format = SpectraSlotsFormat(filepath, mode="r")
+        format.validate()
+
+    def test_spectra_slots_validate_negative(self):
+        filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
+        format = SpectraSlotsFormat(filepath, mode="r")
+        with self.assertRaises(ValidationError):
             format.validate()
