@@ -1,0 +1,50 @@
+[project]
+name = "q2-ms"
+authors = [
+    { name = "Vinzent Risch", email = "risch.vinzent@gmail.com" }
+]
+description = "QIIME 2 plugin for metabolomics data analysis."
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/bokulich-lab/q2-ms"
+Repository = "https://github.com/bokulich-lab/q2-ms"
+
+[project.entry-points.'qiime2.plugins']
+"q2-ms" = "q2_ms.plugin_setup:plugin"
+
+[build-system]
+requires = [
+    "setuptools",
+    "versioningit",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.versioningit.vcs]
+method = "git-archive"
+describe-subst = "$Format:%(describe)$"
+default-tag = "0.0.1"
+
+[tool.versioningit.next-version]
+method = "minor"
+
+[tool.versioningit.format]
+distance = "{base_version}+{distance}.{vcs}{rev}"
+dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
+distance-dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
+
+[tool.versioningit.write]
+file = "q2_ms/_version.py"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["q2_ms*"]
+
+[tool.setuptools.package-data]
+q2_ms = ["**/*"]

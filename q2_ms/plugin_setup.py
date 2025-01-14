@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import Citations, Plugin
+
 from q2_ms import __version__
 
 citations = Citations.load("citations.bib", package="q2_ms")
@@ -18,5 +19,5 @@ plugin = Plugin(
     package="q2_ms",
     description="A QIIME 2 plugin for MS data processing.",
     short_description="A QIIME 2 plugin for MS data processing.",
-    citations=[]
+    citations=[],
 )
