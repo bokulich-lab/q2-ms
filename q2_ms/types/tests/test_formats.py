@@ -113,7 +113,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
 
     def test_spectra_processing_queue_validate_negative_list(self):
         filepath = self.get_data_path(
-            "XCMSExperiment_extra/spectra_processing_queue_list_check.json"
+            "XCMSExperiment_json_invalid/spectra_processing_queue_list_check.json"
         )
         format = XCMSExperimentJSONFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "list"):
@@ -121,7 +121,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
 
     def test_spectra_processing_queue_validate_negative_keys(self):
         filepath = self.get_data_path(
-            "XCMSExperiment_extra/spectra_processing_queue_keys_check.json"
+            "XCMSExperiment_json_invalid/spectra_processing_queue_keys_check.json"
         )
         format = XCMSExperimentJSONFormat(filepath, mode="r")
         with self.assertRaisesRegex(ValidationError, "keys"):
