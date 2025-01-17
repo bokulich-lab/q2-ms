@@ -41,7 +41,7 @@ class mzMLDirFmt(model.DirectoryFormat):
 
 class MSBackendDataFormat(model.TextFileFormat):
     def _validate(self):
-        header_exp_rt = [
+        header_exp = [
             "msLevel",
             "rtime",
             "acquisitionNum",
@@ -59,31 +59,24 @@ class MSBackendDataFormat(model.TextFileFormat):
             "ionisationEnergy",
             "lowMZ",
             "highMZ",
-            "mergedScan",
-            "mergedResultScanNum",
-            "mergedResultStartScanNum",
-            "mergedResultEndScanNum",
             "injectionTime",
             "spectrumId",
-            "ionMobilityDriftTime",
-            "rtime_adjusted",
             "dataStorage",
             "scanIndex",
         ]
 
-        header_exp = header_exp_rt.pop(24)
         header_obs_1 = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
         header_obs_2 = pd.read_csv(
             str(self), sep="\t", skiprows=1, nrows=1
         ).columns.tolist()
 
-        if (
-            header_exp != header_obs_2 and header_exp_rt != header_obs_2
-        ) or header_obs_1[0] != "# MsBackendMzR":
+        if (not set(header_exp).issubset(set(header_obs_2))) or header_obs_1[
+            0
+        ] != "# MsBackendMzR":
             raise ValidationError(
-                "Header does not match MSBackendDataFormat. It must "
-                "consist of the following two lines ('rtime_adjusted' is optional):\n"
-                "# MsBackendMzR\n" + "\t".join(header_exp_rt) + "\n\nFound instead:\n"
+                "Header does not match MSBackendDataFormat. It must consist of the "
+                "following two line with at least these columns:\n"
+                "# MsBackendMzR\n" + "\t".join(header_exp) + "\n\nFound instead:\n"
                 f"{header_obs_1[0]}\n" + "\t".join(header_obs_2)
             )
 
