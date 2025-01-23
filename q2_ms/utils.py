@@ -9,9 +9,9 @@ EXTERNAL_CMD_WARNING = (
 )
 
 
-def run_command(cmd, cwd, verbose=True):
+def run_command(cmd, cwd, verbose=True, env=None):
     if verbose:
         print(EXTERNAL_CMD_WARNING)
         print("\nCommand:", end=" ")
         print(" ".join(cmd), end="\n\n")
-    subprocess.run(cmd, check=True, cwd=cwd)
+    subprocess.run(cmd, check=True, cwd=cwd, env=env)

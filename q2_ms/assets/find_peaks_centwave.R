@@ -1,4 +1,8 @@
-#!/usr/bin/env Rscript
+#!/usr/bin/env Rscript --vanilla
+
+
+
+library(BiocParallel)
 library(xcms)
 library(MsExperiment)
 library(MsIO)
@@ -15,7 +19,7 @@ option_list <- list(
   make_option(opt_str = "--snthresh", type = "numeric"),
   make_option(opt_str = "--prefilter_k", type = "numeric"),
   make_option(opt_str = "--prefilter_i", type = "numeric"),
-  make_option(opt_str = "--mz_center_fun", type = "numeric"),
+  make_option(opt_str = "--mz_center_fun", type = "character"),
   make_option(opt_str = "--integrate", type = "integer"),
   make_option(opt_str = "--mzdiff", type = "numeric"),
   make_option(opt_str = "--fitgauss", type = "logical"),
@@ -34,7 +38,7 @@ opt <- parse_args(optParser)
 mzmlFiles <- list.files(opt$mzml, pattern = "\\.mzML$", full.names = TRUE)
 
 # Create sample metadata
-sampleData <- fromJSON(opt$sample_metadata)
+sampleData <- read.table(file = opt$sample_metadata, header = TRUE, sep = "\t")
 
 # Read the mzML files and sample data into an MsExperiment object
 msexperiment <- readMsExperiment(spectraFiles = mzmlFiles, sampleData = sampleData)
@@ -60,13 +64,6 @@ XCMSExperiment <- findChromPeaks(
   msLevel = opt$ms_level,
   BPPARAM = MulticoreParam(workers = opt$threads)
 )
-print("output_path")   # Standard print
-cat("output_path")   # Print without quotes
-message("output_path")
-print(opt$output_path)   # Standard print
-cat(opt$output_path)   # Print without quotes
-message(opt$output_path)
-
 
 # Export the XCMSExperiment object to the directory format
 saveMsObject(XCMSExperiment, param = PlainTextParam(path = opt$output_path))

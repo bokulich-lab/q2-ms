@@ -1,6 +1,8 @@
 import copy
 import importlib
+import os
 import subprocess
+import tempfile
 
 from qiime2 import Metadata
 
@@ -29,19 +31,19 @@ def find_peaks_centwave(
     # Create parameters dict
     params = copy.copy(locals())
 
-    # Convert metadata to json string
-    params["sample_metadata"] = (
-        params["sample_metadata"].to_dataframe().reset_index().to_json(orient="records")
-    )
-
     # Innit XCMSExperimentDirFmt
     xcms_experiment = XCMSExperimentDirFmt()
 
     # Add output path to params
     params["output_path"] = str(xcms_experiment)
 
-    # Run R script
-    run_find_chrom_peaks(params)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tsv_path = os.path.join(tmp_dir, "sample_metadata.tsv")
+        sample_metadata.to_dataframe().to_csv(tsv_path, sep="\t")
+        params["sample_metadata"] = tsv_path
+
+        # Run R script
+        run_find_chrom_peaks(params)
 
     return xcms_experiment
 
@@ -55,8 +57,15 @@ def run_find_chrom_peaks(params):
     for key, value in params.items():
         cmd.extend([f"--{key}", str(value)])
 
+    env = os.environ.copy()  # Copy the current environment variables
+    env["PATH"] = "/usr/local/bin:" + env["PATH"]
+
+    # Unset Conda-related R variables to prevent it from overriding the system R library
+    for var in ["R_LIBS", "R_LIBS_USER", "R_HOME", "CONDA_PREFIX"]:
+        env.pop(var, None)
+
     try:
-        run_command(cmd, verbose=True, cwd=None)
+        run_command(cmd, verbose=True, cwd=None, env=env)
     except subprocess.CalledProcessError as e:
         raise Exception(
             "An error was encountered while running XCMS, "
