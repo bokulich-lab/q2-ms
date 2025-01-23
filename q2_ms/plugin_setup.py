@@ -41,7 +41,7 @@ plugin = Plugin(
 plugin.methods.register_function(
     function=find_peaks_centwave,
     inputs={"spectra": SampleData[mzML]},
-    outputs=[("xcms_experiment", XCMSExperiment % Properties("peaks"))],
+    outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
     parameters={
         "sample_metadata": Metadata,
         "ppm": Float,
