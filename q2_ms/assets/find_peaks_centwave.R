@@ -1,8 +1,5 @@
 #!/usr/bin/env Rscript --vanilla
 
-
-
-library(BiocParallel)
 library(xcms)
 library(MsExperiment)
 library(MsIO)
@@ -11,7 +8,7 @@ library(optparse)
 
 # Define command-line options
 option_list <- list(
-  make_option(opt_str = "--mzml", type = "character"),
+  make_option(opt_str = "--spectra", type = "character"),
   make_option(opt_str = "--sample_metadata", type = "character"),
   make_option(opt_str = "--ppm", type = "numeric"),
   make_option(opt_str = "--min_peakwidth", type = "numeric"),
@@ -35,7 +32,7 @@ optParser <- OptionParser(option_list = option_list)
 opt <- parse_args(optParser)
 
 # Get full paths to mzML files and read them into an MsExperiment object
-mzmlFiles <- list.files(opt$mzml, pattern = "\\.mzML$", full.names = TRUE)
+mzmlFiles <- list.files(opt$spectra, pattern = "\\.mzML$", full.names = TRUE)
 
 # Create sample metadata
 sampleData <- read.table(file = opt$sample_metadata, header = TRUE, sep = "\t")

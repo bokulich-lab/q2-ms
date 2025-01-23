@@ -40,7 +40,7 @@ plugin = Plugin(
 
 plugin.methods.register_function(
     function=find_peaks_centwave,
-    inputs={"mzml": SampleData[mzML]},
+    inputs={"spectra": SampleData[mzML]},
     outputs=[("xcms_experiment", XCMSExperiment % Properties("peaks"))],
     parameters={
         "sample_metadata": Metadata,
@@ -60,7 +60,7 @@ plugin.methods.register_function(
         "ms_level": Int,
         "threads": Int,
     },
-    input_descriptions={"mzml": "mzML files."},
+    input_descriptions={"spectra": "Spectra data as mzML files."},
     output_descriptions={
         "xcms_experiment": (
             "XCMSExperiment object with chromatographic peak information exported to "

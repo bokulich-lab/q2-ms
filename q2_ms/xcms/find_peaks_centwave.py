@@ -11,7 +11,7 @@ from q2_ms.utils import run_command
 
 
 def find_peaks_centwave(
-    mzml: mzMLDirFmt,
+    spectra: mzMLDirFmt,
     sample_metadata: Metadata,
     ppm: float = 25,
     min_peakwidth: float = 20,
