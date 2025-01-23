@@ -25,6 +25,7 @@ from q2_ms.types._format import (
     XCMSExperimentJSONFormat,
 )
 from q2_ms.types._type import XCMSExperiment
+from q2_ms.xcms.adjust_retention_time_obiwarp import adjust_retention_time_obiwarp
 from q2_ms.xcms.find_peaks_centwave import find_peaks_centwave
 
 citations = Citations.load("citations.bib", package="q2_ms")
@@ -142,6 +143,112 @@ plugin.methods.register_function(
     citations=[
         citations["kosters2018pymzml"],
         citations["tautenhahn2008highly"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
+)
+
+plugin.methods.register_function(
+    function=adjust_retention_time_obiwarp,
+    inputs={
+        "spectra": SampleData[mzML],
+        "chromatographic_peaks": XCMSExperiment % Properties("Peaks"),
+    },
+    outputs=[("retention_time_adjustment", XCMSExperiment % Properties("RT_adjusted"))],
+    parameters={
+        "bin_size": Float,
+        "center_sample": Int,
+        "response": Float,
+        "dist_fun": Str % Choices(["cor_opt", "cor", "cov", "prd", "euc"]),
+        "gap_init": Float,
+        "gap_extend": Float,
+        "factor_diag": Float,
+        "factor_gap": Float,
+        "local_alignment": Bool,
+        "init_penalty": Float,
+        "subset": Int,
+        "subset_adjust": Str % Choices(["previous", "average"]),
+        "rtime_difference_threshold": Float,
+        "chunk_size": Int,
+        "threads": Int,
+    },
+    input_descriptions={
+        "spectra": "Spectra data as mzML files.",
+        "chromatographic_peaks": "XCMSExperiment object with chromatographic peak "
+        "information.",
+    },
+    output_descriptions={
+        "retention_time_adjustment": (
+            "XCMSExperiment object with retention time adjustments exported to plain "
+            "text."
+        )
+    },
+    parameter_descriptions={
+        "bin_size": (
+            "Defines the bin size (in m/z dimension) to be used for the profile matrix "
+            "generation. See step parameter in profile-matrix documentation for more "
+            "details."
+        ),
+        "center_sample": (
+            "Defines the index of the center sample in the experiment. Defaults to "
+            "floor(median(1:length(fileNames(object)))). Note that if subset is used, "
+            "the index passed with center_sample is within these subset samples."
+        ),
+        "response": (
+            "Defines the responsiveness of warping, with response = 0 giving linear "
+            "warping on start and end points and response = 100 warping using all "
+            "bijective anchors."
+        ),
+        "dist_fun": (
+            "Defines the distance function to be used. Allowed values are: 'cor' "
+            "(Pearson correlation), 'cor_opt' (optimized diagonal band correlation), "
+            "'cov' (covariance), 'prd' (product), and 'euc' (Euclidean distance). The "
+            "default value is 'cor_opt'."
+        ),
+        "gap_init": (
+            "Defines the penalty for gap opening. Default values depend on the "
+            "distance function: for 'cor' and 'cor_opt' it is 0.3, for 'cov' and 'prd' "
+            "0.0, and for 'euc' 0.9."
+        ),
+        "gap_extend": (
+            "Defines the penalty for gap enlargement. Default values depend on the "
+            "distance function: for 'cor' and 'cor_opt' it is 2.4, for 'cov' 11.7, for "
+            "'euc' 1.8, and for 'prd' 7.8."
+        ),
+        "factor_diag": (
+            "Defines the local weight applied to diagonal moves in the alignment."
+        ),
+        "factor_gap": ("Defines the local weight for gap moves in the alignment."),
+        "local_alignment": (
+            "Specifies whether a local alignment should be performed instead of the "
+            "default global alignment."
+        ),
+        "init_penalty": (
+            "Defines the penalty for initiating an alignment (for local alignment "
+            "only)."
+        ),
+        "subset": (
+            "Defines the indices of samples within the experiment on which the "
+            "alignment models should be estimated. Samples not part of the subset are "
+            "adjusted based on the closest subset sample."
+        ),
+        "subset_adjust": (
+            "Specifies the method with which non-subset samples should be adjusted. "
+            "Supported options are 'previous' and 'average' (default)."
+        ),
+        "rtime_difference_threshold": (
+            "Defines the retention time difference threshold for alignment."
+        ),
+        "chunk_size": ("Specifies the size of chunks used during processing."),
+    },
+    name="Retention time adjustment with Obiwarp",
+    description=(
+        "This function uses XCMS and the Obiwarp algorithm to perform retention time "
+        "adjustment for high resolution LC/MS data."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
+        citations["lange2008critical"],
         citations["smith2006xcms"],
         citations["msexperiment2024"],
     ],
