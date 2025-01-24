@@ -1,13 +1,11 @@
 import copy
-import importlib
 import os
-import subprocess
 import tempfile
 
 from qiime2 import Metadata
 
 from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
-from q2_ms.utils import run_command
+from q2_ms.utils import run_r_script
 
 
 def find_peaks_centwave(
@@ -43,32 +41,6 @@ def find_peaks_centwave(
         params["sample_metadata"] = tsv_path
 
         # Run R script
-        run_find_chrom_peaks(params)
+        run_r_script(params, "find_peaks_centwave.R", "XCMS")
 
     return xcms_experiment
-
-
-def run_find_chrom_peaks(params):
-    script_path = str(
-        importlib.resources.files("q2_ms") / "assets/find_peaks_centwave.R"
-    )
-    cmd = ["/usr/local/bin/Rscript", "--vanilla", script_path]
-
-    for key, value in params.items():
-        cmd.extend([f"--{key}", str(value)])
-
-    env = os.environ.copy()  # Copy the current environment variables
-    env["PATH"] = "/usr/local/bin:" + env["PATH"]
-
-    # Unset Conda-related R variables to prevent it from overriding the system R library
-    for var in ["R_LIBS", "R_LIBS_USER", "R_HOME", "CONDA_PREFIX"]:
-        env.pop(var, None)
-
-    try:
-        run_command(cmd, verbose=True, cwd=None, env=env)
-    except subprocess.CalledProcessError as e:
-        raise Exception(
-            "An error was encountered while running XCMS, "
-            f"(return code {e.returncode}), please inspect "
-            "stdout and stderr to learn more."
-        )
