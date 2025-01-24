@@ -26,7 +26,8 @@ def run_r_script(params, script_name, package_name):
     for key, value in params.items():
         cmd.extend([f"--{key}", str(value)])
 
-    env = os.environ.copy()  # Copy the current environment variables
+    # Add /usr/local/bin to PATH to use system installation of Rscript
+    env = os.environ.copy()
     env["PATH"] = "/usr/local/bin:" + env["PATH"]
 
     # Unset Conda-related R variables to prevent it from overriding the system R library
