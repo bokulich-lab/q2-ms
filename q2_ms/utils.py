@@ -1,3 +1,5 @@
+import importlib
+import os
 import subprocess
 
 EXTERNAL_CMD_WARNING = (
@@ -15,3 +17,27 @@ def run_command(cmd, cwd, verbose=True, env=None):
         print("\nCommand:", end=" ")
         print(" ".join(cmd), end="\n\n")
     subprocess.run(cmd, check=True, cwd=cwd, env=env)
+
+
+def run_r_script(params, script_name, package_name):
+    script_path = str(importlib.resources.files("q2_ms") / f"assets/{script_name}.R")
+    cmd = ["/usr/local/bin/Rscript", "--vanilla", script_path]
+
+    for key, value in params.items():
+        cmd.extend([f"--{key}", str(value)])
+
+    env = os.environ.copy()  # Copy the current environment variables
+    env["PATH"] = "/usr/local/bin:" + env["PATH"]
+
+    # Unset Conda-related R variables to prevent it from overriding the system R library
+    for var in ["R_LIBS", "R_LIBS_USER", "R_HOME", "CONDA_PREFIX"]:
+        env.pop(var, None)
+
+    try:
+        run_command(cmd, verbose=True, cwd=None, env=env)
+    except subprocess.CalledProcessError as e:
+        raise Exception(
+            f"An error was encountered while running {package_name}, "
+            f"(return code {e.returncode}), please inspect "
+            "stdout and stderr to learn more."
+        )
