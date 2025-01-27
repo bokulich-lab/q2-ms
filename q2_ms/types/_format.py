@@ -253,17 +253,15 @@ class XCMSExperimentFeatureDefinitionsFormat(model.TextFileFormat):
             "rtmin",
             "rtmax",
             "npeaks",
-            "KO",
-            "WT",
             "peakidx",
             "ms_level",
         ]
         header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
 
-        if header_exp != header_obs:
+        if not set(header_exp).issubset(set(header_obs)):
             raise ValidationError(
                 "Header does not match XCMSExperimentFeatureDefinitionsFormat. It must "
-                "consist of the following columns:\n"
+                "at least consist of the following columns:\n"
                 + ", ".join(header_exp)
                 + "\n\nFound instead:\n"
                 + ", ".join(header_obs)
