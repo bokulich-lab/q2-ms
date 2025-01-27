@@ -27,6 +27,7 @@ from q2_ms.types._format import (
 from q2_ms.types._type import XCMSExperiment
 from q2_ms.xcms.adjust_retention_time_obiwarp import adjust_retention_time_obiwarp
 from q2_ms.xcms.find_peaks_centwave import find_peaks_centwave
+from q2_ms.xcms.group_peaks_density import group_peaks_density
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -249,6 +250,73 @@ plugin.methods.register_function(
     citations=[
         citations["kosters2018pymzml"],
         citations["lange2008critical"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
+)
+
+plugin.methods.register_function(
+    function=group_peaks_density,
+    inputs={
+        "spectra": SampleData[mzML],
+        "xcms_experiment": XCMSExperiment % Properties("RT_adjusted"),
+    },
+    outputs=[("xcms_experiment_grouped", XCMSExperiment % Properties("Grouped"))],
+    parameters={
+        "bw": Float,
+        "min_fraction": Float,
+        "min_samples": Float,
+        "bin_size": Float,
+        "max_features": Float,
+        "ms_level": Int,
+        "threads": Int,
+    },
+    input_descriptions={
+        "spectra": "Spectra data as mzML files.",
+        "xcms_experiment": "XCMSExperiment object with chromatographic peak "
+        "information and adjusted retention time.",
+    },
+    output_descriptions={
+        "xcms_experiment_grouped": (
+            "XCMSExperiment object with grouped chromatographic peak "
+            "information and adjusted retention time."
+        )
+    },
+    parameter_descriptions={
+        "bw": (
+            "Defining the bandwidth (standard deviation ot the smoothing kernel) to be "
+            "used."
+        ),
+        "min_fraction": (
+            "Defining the minimum fraction of samples in at least one sample group in "
+            "which the peaks have to be present to be considered as a peak group "
+            "(feature)."
+        ),
+        "min_samples": (
+            "With the minimum number of samples in at least one sample group in which "
+            "the peaks have to be detected to be considered a peak group (feature)."
+        ),
+        "bin_size": ("Defining the size of the overlapping slices in mz dimension."),
+        "max_features": (
+            "The maximum number of peak groups to be identified in a single mz slice."
+        ),
+        "ms_level": (
+            "defining the MS level on which the correspondence should be performed. "
+            "It is required that chromatographic peaks of the respective MS level are "
+            "present."
+        ),
+        "threads": (
+            "Defines the local weight applied to diagonal moves in the alignment."
+        ),
+    },
+    name="Correspondence based on density",
+    description=(
+        "This method performs performs correspondence (chromatographic peak grouping) "
+        "based on the density (distribution) of identified peaks along the retention "
+        "time axis within slices of overlapping mz ranges."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
         citations["smith2006xcms"],
         citations["msexperiment2024"],
     ],
