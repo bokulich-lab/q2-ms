@@ -26,6 +26,7 @@ from q2_ms.types._format import (
 )
 from q2_ms.types._type import XCMSExperiment
 from q2_ms.xcms.adjust_retention_time_obiwarp import adjust_retention_time_obiwarp
+from q2_ms.xcms.fill_peaks_area import fill_peaks_area
 from q2_ms.xcms.find_peaks_centwave import find_peaks_centwave
 from q2_ms.xcms.group_peaks_density import group_peaks_density
 
@@ -314,6 +315,78 @@ plugin.methods.register_function(
         "This method performs performs correspondence (chromatographic peak grouping) "
         "based on the density (distribution) of identified peaks along the retention "
         "time axis within slices of overlapping mz ranges."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
+)
+
+plugin.methods.register_function(
+    function=fill_peaks_area,
+    inputs={
+        "spectra": SampleData[mzML],
+        "xcms_experiment": XCMSExperiment % Properties("Grouped"),
+    },
+    outputs=[("xcms_experiment_grouped", XCMSExperiment % Properties("Filled"))],
+    parameters={
+        "mz_min": Str,
+        "mz_max": Str,
+        "rt_min": Str,
+        "rt_max": Str,
+        "ms_level": Int,
+        "threads": Int,
+    },
+    input_descriptions={
+        "spectra": "Spectra data as mzML files.",
+        "xcms_experiment": "XCMSExperiment object with grouped chromatographic peak "
+        "information and adjusted retention time.",
+    },
+    output_descriptions={
+        "xcms_experiment_grouped": (
+            "XCMSExperiment object with gap filled and grouped chromatographic peak "
+            "information and adjusted retention time."
+        )
+    },
+    parameter_descriptions={
+        "mz_min": (
+            "Function to be applied to values in the 'mzmin' column of all "
+            "chromatographic peaks of a feature to define the lower m/z value "
+            "of the area from which signal for the feature should be integrated. "
+            "Defaults to mzmin = function(z) quantile(z, probs = 0.25) hence using "
+            "the 25% quantile of all values."
+        ),
+        "mz_max": (
+            "Function to be applied to values in the 'mzmax' column of all "
+            "chromatographic peaks of a feature to define the upper m/z value "
+            "of the area from which signal for the feature should be integrated. "
+            "Defaults to mzmax = function(z) quantile(z, probs = 0.75) hence using "
+            "the 75% quantile of all values."
+        ),
+        "rt_min": (
+            "Function to be applied to values in the 'rtmin' column of all "
+            "chromatographic peaks of a feature to define the lower rt value "
+            "of the area from which signal for the feature should be integrated. "
+            "Defaults to rtmin = function(z) quantile(z, probs = 0.25) hence using "
+            "the 25% quantile of all values."
+        ),
+        "rt_max": (
+            "Function to be applied to values in the 'rtmax' column of all "
+            "chromatographic peaks of a feature to define the upper rt value "
+            "of the area from which signal for the feature should be integrated. "
+            "Defaults to rtmax = function(z) quantile(z, probs = 0.75) hence using "
+            "the 75% quantile of all values."
+        ),
+    },
+    name="Integrate areas of missing peaks",
+    description=(
+        "This method performs performs signal integration in the mz-rt area of a "
+        "feature (chromatographic peak group) for samples in which no chromatographic "
+        "peak for this feature was identified and add it to the peaks matrix. Such "
+        "filled-in peaks are indicated with a TRUE in column 'is_filled' in the peaks "
+        "table. This function uses the fillChromPeaks() function of XCMS with the "
+        "ChromPeakAreaParam() parameters."
     ),
     citations=[
         citations["kosters2018pymzml"],
