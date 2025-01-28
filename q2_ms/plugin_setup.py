@@ -329,7 +329,7 @@ plugin.methods.register_function(
         "spectra": SampleData[mzML],
         "xcms_experiment": XCMSExperiment % Properties("Grouped"),
     },
-    outputs=[("xcms_experiment_grouped", XCMSExperiment % Properties("Filled"))],
+    outputs=[("xcms_experiment_filled", XCMSExperiment % Properties("Filled"))],
     parameters={
         "mz_min": Str,
         "mz_max": Str,
