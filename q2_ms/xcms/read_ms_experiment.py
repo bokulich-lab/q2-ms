@@ -8,23 +8,9 @@ from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
 from q2_ms.utils import run_r_script
 
 
-def find_peaks_centwave(
+def read_ms_experiment(
     spectra: mzMLDirFmt,
     sample_metadata: Metadata,
-    ppm: float = 25,
-    min_peakwidth: float = 20,
-    max_peakwidth: float = 50,
-    snthresh: float = 10,
-    prefilter_k: float = 3,
-    prefilter_i: float = 100,
-    mz_center_fun: str = "wMean",
-    integrate: int = 1,
-    mzdiff: float = -0.001,
-    fitgauss: bool = False,
-    noise: float = 0,
-    first_baseline_check: bool = True,
-    ms_level: int = 1,
-    threads: int = 1,
 ) -> XCMSExperimentDirFmt:
     # Create parameters dict
     params = copy.copy(locals())
@@ -41,6 +27,6 @@ def find_peaks_centwave(
         params["sample_metadata"] = tsv_path
 
         # Run R script
-        run_r_script(params, "find_peaks_centwave.R", "XCMS")
+        run_r_script(params, "read_ms_experiment", "XCMS")
 
     return xcms_experiment
