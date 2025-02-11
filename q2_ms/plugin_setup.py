@@ -51,17 +51,16 @@ plugin.methods.register_function(
     },
     parameter_descriptions={
         "sample_metadata": (
-            "Metadata with the sample annotations. The index column should be called "
-            "'sampleid' and the values represent the filenames. There can be "
-            "additional columns added to group the samples by sample type or sample "
-            "group, This can be helpful for feature filtering with filter-features "
-            "and subset alignment with adjust-retention-time-obiwarp."
+            "Optional sample metadata. This can be used for example for feature "
+            "filtering with 'filter-features' and subset-based alignment with "
+            "'adjust-retention-time-obiwarp'. Samples should be ordered by injection "
+            "index for subset-based alignment. "
         ),
     },
     name="Read spectra into XCMS experiment",
     description=(
         "This function uses the XCMS package to read in MS data from mzML files into "
-        "an XCMS experiment and export it as plain test files."
+        "an XcmsExperiment object and export it as plain text files."
     ),
     citations=[
         citations["kosters2018pymzml"],
