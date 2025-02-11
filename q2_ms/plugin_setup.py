@@ -10,6 +10,20 @@ from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import mzML, mzMLDirFmt, mzMLFormat
+from q2_ms.types._format import (
+    MSBackendDataFormat,
+    MSExperimentLinkMColsFormat,
+    MSExperimentSampleDataFormat,
+    MSExperimentSampleDataLinksSpectra,
+    SpectraSlotsFormat,
+    XCMSExperimentChromPeakDataFormat,
+    XCMSExperimentChromPeaksFormat,
+    XCMSExperimentDirFmt,
+    XCMSExperimentFeatureDefinitionsFormat,
+    XCMSExperimentFeaturePeakIndexFormat,
+    XCMSExperimentJSONFormat,
+)
+from q2_ms.types._type import XCMSExperiment
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -25,11 +39,26 @@ plugin = Plugin(
 # Registrations
 plugin.register_semantic_types(
     mzML,
+    XCMSExperiment,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
+plugin.register_semantic_type_to_format(
+    XCMSExperiment, artifact_format=XCMSExperimentDirFmt
+)
 
 plugin.register_formats(
     mzMLFormat,
     mzMLDirFmt,
+    MSBackendDataFormat,
+    MSExperimentLinkMColsFormat,
+    MSExperimentSampleDataFormat,
+    MSExperimentSampleDataLinksSpectra,
+    SpectraSlotsFormat,
+    XCMSExperimentChromPeakDataFormat,
+    XCMSExperimentChromPeaksFormat,
+    XCMSExperimentDirFmt,
+    XCMSExperimentFeatureDefinitionsFormat,
+    XCMSExperimentFeaturePeakIndexFormat,
+    XCMSExperimentJSONFormat,
 )
