@@ -10,7 +10,7 @@ from q2_ms.utils import run_r_script
 
 def read_ms_experiment(
     spectra: mzMLDirFmt,
-    sample_metadata: Metadata,
+    sample_metadata: Metadata = None,
 ) -> XCMSExperimentDirFmt:
     # Create parameters dict
     params = copy.copy(locals())
