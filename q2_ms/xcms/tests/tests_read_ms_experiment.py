@@ -14,7 +14,7 @@ class TestReadMsExperiment(TestPluginBase):
     def setUp(self):
         super().setUp()
         self.sample_metadata = pd.read_csv(
-            self.get_data_path("faahKO_sample_data/sample_data.tsv"),
+            self.get_data_path("faahKO_sample_data/sample_metadata.tsv"),
             sep="\t",
             index_col=0,
         )
@@ -27,7 +27,7 @@ class TestReadMsExperiment(TestPluginBase):
         )
         sample_data_exp = pd.read_csv(
             self.get_data_path(
-                "read_ms_experiment/ms_experiment_sample_data_metadata.txt"
+                "ms_experiment_sample_data/ms_experiment_sample_data_metadata.txt"
             ),
             sep="\t",
             index_col=0,
@@ -46,7 +46,7 @@ class TestReadMsExperiment(TestPluginBase):
         xcms_experiment = read_ms_experiment(spectra=self.spectra)
         sample_data_exp = pd.read_csv(
             self.get_data_path(
-                "read_ms_experiment/ms_experiment_sample_data_default.txt"
+                "ms_experiment_sample_data/ms_experiment_sample_data_default.txt"
             ),
             sep="\t",
             index_col=0,
