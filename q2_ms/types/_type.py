@@ -9,3 +9,4 @@ from q2_types.sample_data import SampleData
 from qiime2.core.type import SemanticType
 
 mzML = SemanticType("mzML", variant_of=SampleData.field["type"])
+XCMSExperiment = SemanticType("XCMSExperiment")

@@ -1,0 +1,4 @@
+processingQueueVariables =
+processing = Filter: select retention time [2550..4250] on MS level(s) 1 [Fri Jan 10 10:44:05 2025]
+processingChunkSize = Inf
+backend = MsBackendMzR
