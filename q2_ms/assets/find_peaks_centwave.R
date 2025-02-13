@@ -1,15 +1,15 @@
 #!/usr/bin/env Rscript --vanilla
 
 library(xcms)
+library(Spectra)
 library(MsExperiment)
 library(MsIO)
-library(jsonlite)
 library(optparse)
 
 # Define command-line options
 option_list <- list(
   make_option(opt_str = "--spectra", type = "character"),
-  make_option(opt_str = "--sample_metadata", type = "character"),
+  make_option(opt_str = "--xcms_experiment", type = "character"),
   make_option(opt_str = "--ppm", type = "numeric"),
   make_option(opt_str = "--min_peakwidth", type = "numeric"),
   make_option(opt_str = "--max_peakwidth", type = "numeric"),
@@ -31,16 +31,10 @@ option_list <- list(
 optParser <- OptionParser(option_list = option_list)
 opt <- parse_args(optParser)
 
-# Get full paths to mzML files and read them into an MsExperiment object
-mzmlFiles <- list.files(opt$spectra, pattern = "\\.mzML$", full.names = TRUE)
+# Load the XCMSExperiment
+XCMSExperiment <- readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment))
 
-# Create sample metadata
-sampleData <- read.table(file = opt$sample_metadata, header = TRUE, sep = "\t")
-
-# Read the mzML files and sample data into an MsExperiment object
-msexperiment <- readMsExperiment(spectraFiles = mzmlFiles, sampleData = sampleData)
-
-# Load default parameters for CentWave
+# Create paramter object for CentWave
 CentWaveParams <- CentWaveParam(
   ppm = opt$ppm,
   peakwidth = c(opt$min_peakwidth, opt$max_peakwidth),
@@ -56,11 +50,12 @@ CentWaveParams <- CentWaveParam(
 
 # Find peaks using the CentWave algorithm
 XCMSExperiment <- findChromPeaks(
-  object = msexperiment,
+  object = XCMSExperiment,
   param = CentWaveParams,
   msLevel = opt$ms_level,
   BPPARAM = MulticoreParam(workers = opt$threads)
 )
 
 # Export the XCMSExperiment object to the directory format
-saveMsObject(XCMSExperiment, param = PlainTextParam(path = opt$output_path))
+saveMsObject(XCMSExperiment, param = PlainTextParam(path = "/Users/rischv/Documents/data/metabolomics/test/out_qiime_centwave_faahko"))
+                                                      # opt$output_path))

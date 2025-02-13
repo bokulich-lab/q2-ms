@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
 from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str
-from qiime2.plugin import Citations, Metadata, Plugin
+from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import mzML, mzMLDirFmt, mzMLFormat
@@ -40,10 +40,12 @@ plugin = Plugin(
 
 plugin.methods.register_function(
     function=find_peaks_centwave,
-    inputs={"spectra": SampleData[mzML]},
+    inputs={
+        "spectra": SampleData[mzML],
+        "xcms_experiment": SampleData[mzML],
+    },
     outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
     parameters={
-        "sample_metadata": Metadata,
         "ppm": Float,
         "min_peakwidth": Float,
         "max_peakwidth": Float,
@@ -60,7 +62,10 @@ plugin.methods.register_function(
         "ms_level": Int,
         "threads": Int,
     },
-    input_descriptions={"spectra": "Spectra data as mzML files."},
+    input_descriptions={
+        "spectra": "Spectra data as mzML files.",
+        "xcms_experiment": "XCMSExperiment object exported to plain text.",
+    },
     output_descriptions={
         "xcms_experiment": (
             "XCMSExperiment object with chromatographic peak information exported to "
@@ -68,11 +73,6 @@ plugin.methods.register_function(
         )
     },
     parameter_descriptions={
-        "sample_metadata": (
-            "Metadata with the sample annotations. The index column should be called "
-            "'sampleid' and should be identical to the filename. The second column "
-            "should be called 'samplegroup'."
-        ),
         "ppm": (
             "Defines the maximal tolerated m/z deviation in consecutive scans in parts "
             "per million (ppm) for the initial ROI definition."

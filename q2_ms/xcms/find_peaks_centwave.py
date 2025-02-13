@@ -1,16 +1,13 @@
 import copy
-import os
-import tempfile
-
-from qiime2 import Metadata
 
 from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
 from q2_ms.utils import run_r_script
+from q2_ms.xcms.utils import change_data_paths
 
 
 def find_peaks_centwave(
     spectra: mzMLDirFmt,
-    sample_metadata: Metadata,
+    xcms_experiment: XCMSExperimentDirFmt,
     ppm: float = 25,
     min_peakwidth: float = 20,
     max_peakwidth: float = 50,
@@ -29,18 +26,16 @@ def find_peaks_centwave(
     # Create parameters dict
     params = copy.copy(locals())
 
-    # Innit XCMSExperimentDirFmt
+    # Init XCMSExperimentDirFmt
     xcms_experiment = XCMSExperimentDirFmt()
+
+    # Change data paths in xcms experiment
+    change_data_paths(str(xcms_experiment), str(spectra))
 
     # Add output path to params
     params["output_path"] = str(xcms_experiment)
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tsv_path = os.path.join(tmp_dir, "sample_metadata.tsv")
-        sample_metadata.to_dataframe().to_csv(tsv_path, sep="\t")
-        params["sample_metadata"] = tsv_path
-
-        # Run R script
-        run_r_script(params, "find_peaks_centwave.R", "XCMS")
+    # Run R script
+    run_r_script(params, "find_peaks_centwave", "XCMS")
 
     return xcms_experiment
