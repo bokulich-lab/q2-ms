@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
 from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str
-from qiime2.plugin import Citations, Metadata, Plugin
+from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import mzML, mzMLDirFmt, mzMLFormat
@@ -41,27 +41,32 @@ plugin = Plugin(
 
 plugin.methods.register_function(
     function=find_peaks_centwave,
-    inputs={"spectra": SampleData[mzML]},
+    inputs={
+        "spectra": SampleData[mzML],
+        "xcms_experiment": SampleData[mzML],
+    },
     outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
     parameters={
-        "sample_metadata": Metadata,
-        "ppm": Float,
-        "min_peakwidth": Float,
-        "max_peakwidth": Float,
-        "snthresh": Float,
+        "ppm": Float % Range(0, None),
+        "min_peak_width": Float % Range(0, None),
+        "max_peak_width": Float % Range(0, None),
+        "sn_thresh": Float % Range(0, None),
         "prefilter_k": Float,
         "prefilter_i": Float,
         "mz_center_fun": Str
         % Choices(["wMean", "mean", "apex", "wMeanApex3", "meanApex3"]),
         "integrate": Int % Range(1, 3),
-        "mzdiff": Float,
-        "fitgauss": Bool,
+        "mz_diff": Float,
+        "fit_gauss": Bool,
         "noise": Float,
         "first_baseline_check": Bool,
         "ms_level": Int,
         "threads": Int,
     },
-    input_descriptions={"spectra": "Spectra data as mzML files."},
+    input_descriptions={
+        "spectra": "Spectra data as mzML files.",
+        "xcms_experiment": "XCMSExperiment object exported to plain text.",
+    },
     output_descriptions={
         "xcms_experiment": (
             "XCMSExperiment object with chromatographic peak information exported to "
@@ -69,24 +74,19 @@ plugin.methods.register_function(
         )
     },
     parameter_descriptions={
-        "sample_metadata": (
-            "Metadata with the sample annotations. The index column should be called "
-            "'sampleid' and should be identical to the filename. The second column "
-            "should be called 'samplegroup'."
-        ),
         "ppm": (
             "Defines the maximal tolerated m/z deviation in consecutive scans in parts "
             "per million (ppm) for the initial ROI definition."
         ),
-        "min_peakwidth": (
+        "min_peak_width": (
             "Defines the minimal expected approximate peak width in chromatographic "
             "space in seconds."
         ),
-        "max_peakwidth": (
+        "max_peak_width": (
             "Defines the maximal expected approximate peak width in chromatographic "
             "space in seconds."
         ),
-        "snthresh": "Defines the signal to noise ratio cutoff.",
+        "sn_thresh": "Defines the signal to noise ratio cutoff.",
         "prefilter_k": (
             "Specifies the prefilter step for the first analysis step (ROI detection). "
             "Mass traces are only retained if they contain at least k peaks."
@@ -110,13 +110,13 @@ plugin.methods.register_function(
             "is done on the real data. The latter method is more accurate but prone "
             "to noise, while the former is more robust, but less exact."
         ),
-        "mzdiff": (
+        "mz_diff": (
             "Represents the minimum difference in m/z dimension required for peaks with"
             " overlapping retention times; can be negative to allow overlap. During "
             "peak post-processing, peaks defined to be overlapping are reduced to the "
             "one peak with the largest signal."
         ),
-        "fitgauss": (
+        "fit_gauss": (
             "Whether or not a Gaussian should be fitted to each peak. This affects "
             "mostly the retention time position of the peak."
         ),
