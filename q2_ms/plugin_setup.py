@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
-from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str
+from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str, TypeMap
 from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
@@ -38,13 +38,22 @@ plugin = Plugin(
     short_description="A QIIME 2 plugin for MS data processing.",
 )
 
+I_find_peaks, O_find_peaks = TypeMap(
+    {
+        XCMSExperiment: XCMSExperiment % Properties("peaks"),
+        XCMSExperiment
+        % Properties("rt-adjusted"): XCMSExperiment
+        % Properties("peaks", "rt-adjusted"),
+    }
+)
+
 plugin.methods.register_function(
     function=find_peaks_centwave,
     inputs={
         "spectra": SampleData[mzML],
-        "xcms_experiment": SampleData[mzML],
+        "xcms_experiment": I_find_peaks,
     },
-    outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
+    outputs=[("xcms_experiment_peaks", O_find_peaks)],
     parameters={
         "ppm": Float % Range(0, None),
         "min_peak_width": Float % Range(0, None),
