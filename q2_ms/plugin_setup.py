@@ -76,7 +76,7 @@ plugin.methods.register_function(
         "xcms_experiment": "XCMSExperiment object exported to plain text.",
     },
     output_descriptions={
-        "xcms_experiment": (
+        "xcms_experiment_peaks": (
             "XCMSExperiment object with chromatographic peak information exported to "
             "plain text."
         )
