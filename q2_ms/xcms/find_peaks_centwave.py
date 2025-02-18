@@ -21,6 +21,9 @@ def find_peaks_centwave(
     noise: float = 0,
     first_baseline_check: bool = True,
     ms_level: int = 1,
+    extend_length_msw: bool = False,
+    verbose_columns: bool = False,
+    verbose_beta_columns: bool = False,
     threads: int = 1,
 ) -> XCMSExperimentDirFmt:
     # Create parameters dict

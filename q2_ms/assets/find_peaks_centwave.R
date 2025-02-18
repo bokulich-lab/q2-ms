@@ -25,6 +25,9 @@ option_list <- list(
   make_option(opt_str = "--first_baseline_check", type = "logical"),
   make_option(opt_str = "--ms_level", type = "integer"),
   make_option(opt_str = "--threads", type = "integer"),
+  make_option(opt_str = "--extend_length_msw", type = "logical"),
+  make_option(opt_str = "--verbose_columns", type = "logical"),
+  make_option(opt_str = "--verbose_beta_columns", type = "logical"),
   make_option(opt_str = "--output_path", type = "character")
 )
 
@@ -51,6 +54,9 @@ CentWaveParams <- CentWaveParam(
   fitgauss = opt$fit_gauss,
   noise = opt$noise,
   firstBaselineCheck = opt$first_baseline_check,
+  extendLengthMSW = opt$extend_length_msw,
+  verboseColumns = opt$verbose_columns,
+  verboseBetaColumns= opt$verbose_beta_columns
 )
 
 # Find peaks using the CentWave algorithm
