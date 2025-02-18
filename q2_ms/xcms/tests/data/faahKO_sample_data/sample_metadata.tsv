@@ -1,9 +1,5 @@
 sampleid	samplegroup	sampletype
 ko15	KO	QC
 ko16	KO	study
-ko21	KO	study
-ko22	KO	QC
-wt15	WT	study
-wt16	WT	study
 wt21	WT	QC
 wt22	WT	study
