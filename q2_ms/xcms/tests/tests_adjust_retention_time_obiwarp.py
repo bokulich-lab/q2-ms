@@ -1,5 +1,7 @@
+import os
 from shutil import copytree
 
+import pandas as pd
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
@@ -9,7 +11,7 @@ from q2_ms.xcms.adjust_retention_time_obiwarp import (
 )
 
 
-class TestFindPeaksCentWave(TestPluginBase):
+class TestAdjustRetentionTimeObiwarp(TestPluginBase):
     package = "q2_ms.xcms.tests"
 
     def test_adjust_retention_time_obiwarp(self):
@@ -21,38 +23,36 @@ class TestFindPeaksCentWave(TestPluginBase):
         )
         spectra = mzMLDirFmt()
         copytree(self.get_data_path("faahKO"), str(spectra), dirs_exist_ok=True)
-        adjust_retention_time_obiwarp(
+        xcms_experiment_rt_corrected = adjust_retention_time_obiwarp(
             spectra=spectra,
             xcms_experiment=xcms_experiment,
-            bin_size=0.1,
-            center_sample="ko21",
-            response=0.2,
+            bin_size=0.6,
+            response=3,
             dist_fun="cor",
-            gap_init=-2,
-            gap_extend=-0.5,
-            factor_diag=0,
-            factor_gap=0,
+            gap_init=0.4,
+            gap_extend=2.5,
+            factor_diag=3,
+            factor_gap=2,
             local_alignment=True,
-            init_penalty=0,
-            sample_metadata_column="sampletype",
+            init_penalty=0.1,
+            sample_metadata_column="sample_type",
             subset_label="QC",
             subset_adjust="previous",
-            rtime_difference_threshold=-0.5,
-            chunk_size=-7,
+            rtime_difference_threshold=6,
+            chunk_size=1,
             threads=1,
         )
-        # chrom_peaks_exp = pd.read_csv(
-        #     self.get_data_path("chrom_peaks_R/xcms_experiment_chrom_peaks.txt"),
-        #     sep="\t",
-        #     index_col=0,
-        # )
-        # chrom_peaks_obs = pd.read_csv(
-        #     os.path.join(str(xcms_experiment_peaks),
-        #     "xcms_experiment_chrom_peaks.txt"),
-        #     sep="\t",
-        #     index_col=0,
-        # )
-        # pd.testing.assert_frame_equal(chrom_peaks_exp, chrom_peaks_obs)
+        rt_corrected_exp = pd.read_csv(
+            self.get_data_path("rt_correction_R/rt_corrected.txt"),
+            sep="\t",
+        )["rtime_adjusted"]
+        rt_corrected_obs = pd.read_csv(
+            os.path.join(str(xcms_experiment_rt_corrected), "ms_backend_data.txt"),
+            sep="\t",
+            skiprows=1,
+            index_col=0,
+        )["rtime_adjusted"].reset_index(drop=True)
+        self.assertTrue(rt_corrected_exp.equals(rt_corrected_obs))
 
     def test_invalid_combination_of_subset_parameters(self):
         with self.assertRaisesRegex(ValueError, r"combination"):
