@@ -39,13 +39,22 @@ plugin = Plugin(
     short_description="A QIIME 2 plugin for MS data processing.",
 )
 
+I_find_peaks, O_find_peaks = TypeMap(
+    {
+        XCMSExperiment: XCMSExperiment % Properties("peaks"),
+        XCMSExperiment
+        % Properties("rt-adjusted"): XCMSExperiment
+        % Properties("peaks", "rt-adjusted"),
+    }
+)
+
 plugin.methods.register_function(
     function=find_peaks_centwave,
     inputs={
         "spectra": SampleData[mzML],
-        "xcms_experiment": SampleData[mzML],
+        "xcms_experiment": I_find_peaks,
     },
-    outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
+    outputs=[("xcms_experiment_peaks", O_find_peaks)],
     parameters={
         "ppm": Float % Range(0, None),
         "min_peak_width": Float % Range(0, None),
@@ -60,15 +69,18 @@ plugin.methods.register_function(
         "fit_gauss": Bool,
         "noise": Float,
         "first_baseline_check": Bool,
-        "ms_level": Int,
-        "threads": Int,
+        "ms_level": Int % Range(1, 3),
+        "threads": Int % Range(1, None),
+        "extend_length_msw": Bool,
+        "verbose_columns": Bool,
+        "verbose_beta_columns": Bool,
     },
     input_descriptions={
         "spectra": "Spectra data as mzML files.",
         "xcms_experiment": "XCMSExperiment object exported to plain text.",
     },
     output_descriptions={
-        "xcms_experiment": (
+        "xcms_experiment_peaks": (
             "XCMSExperiment object with chromatographic peak information exported to "
             "plain text."
         )
@@ -133,10 +145,29 @@ plugin.methods.register_function(
             "Defines the MS level on which the peak detection should be performed."
         ),
         "threads": "Number of threads to be used.",
+        "extend_length_msw": (
+            "Option to force centWave to use all scales when running centWave rather "
+            "than truncating with the EIC length. Uses the 'open' method to extend the "
+            "EIC to a integer base-2 length prior to being passed to 'convolve' rather "
+            "than the default 'reflect' method. See "
+            "https://github.com/sneumann/xcms/issues/445 for more information."
+        ),
+        "verbose_columns": (
+            "Option to add additional peak meta data columns to the peaks data."
+        ),
+        "verbose_beta_columns": (
+            "Option to calculate two additional metrics of peak quality via comparison "
+            "to an idealized bell curve. Adds 'beta_cor' and 'beta_snr' to the "
+            "'chromPeaks' output, corresponding to a Pearson correlation coefficient "
+            "to a bell curve with several degrees of skew as well as an estimate of "
+            "signal-to-noise using the residuals from the best-fitting bell curve. "
+            "See https://github.com/sneumann/xcms/pull/685 and "
+            "https://doi.org/10.1186/s12859-023-05533-4 for more information."
+        ),
     },
     name="Find chromatographic peaks with centWave",
     description=(
-        "This function uses the XCMS and the centWave algorithm to perform peak "
+        "This function uses XCMS and the centWave algorithm to perform peak "
         "density and wavelet based chromatographic peak detection for high resolution "
         "LC/MS data."
     ),
