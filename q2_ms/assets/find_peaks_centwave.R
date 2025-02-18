@@ -32,8 +32,12 @@ option_list <- list(
 optParser <- OptionParser(option_list = option_list)
 opt <- parse_args(optParser)
 
-# Load the XCMSExperiment
-XCMSExperiment <- readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment))
+# Load the XCMSExperiment or MsExperiment
+XCMSExperiment <- tryCatch({
+    readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment))
+}, error = function(e) {
+    readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment))
+})
 
 # Create paramter object for CentWave
 CentWaveParams <- CentWaveParam(
