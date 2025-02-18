@@ -3,7 +3,6 @@
 library(xcms)
 library(MsExperiment)
 library(MsIO)
-library(jsonlite)
 library(optparse)
 
 # Define command-line options
