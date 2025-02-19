@@ -1,29 +1,40 @@
 import csv
 import os
-from pathlib import Path
 
 import pandas as pd
 
 
-def change_data_paths(dir_path, new_directory):
+def change_spectra_paths(xcms_experiment_path, spectra_path):
+    """Changes the paths to the spectra files in XCMSExperiment files.
+
+    The paths to the spectra files is recorded in multiple files in the
+    XCMSExperiment artifact. This function updates the paths to the spectra files
+    in the XCMSExperiment files with the specified spectra_path while keeping the
+    filenames unchanged.
+
+    Args:
+        xcms_experiment_path (str): Path to the XCMSExperiment.
+        spectra_path (str): Path to the directory where the spectra files are
+        located.
+
+    """
     for filename in ["ms_backend_data.txt", "ms_experiment_sample_data.txt"]:
         # Read in dataframe
-        file_path = os.path.join(dir_path, filename)
-        if filename == "ms_backend_data.txt":
-            df = pd.read_csv(
-                file_path, sep="\t", header=1, index_col=0, quoting=csv.QUOTE_NONE
-            )
-        else:
-            df = pd.read_csv(file_path, sep="\t", index_col=0, quoting=csv.QUOTE_NONE)
+        file_path = os.path.join(xcms_experiment_path, filename)
+        header = 1 if filename == "ms_backend_data.txt" else 0
+        df = pd.read_csv(
+            file_path, sep="\t", header=header, index_col=0, quoting=csv.QUOTE_NONE
+        )
 
         # Update the paths while keeping the original filenames
-        for column in ['"dataOrigin"', '"dataStorage"', '"spectraOrigin"']:
-            try:
-                df[column] = df[column].apply(
-                    lambda x: '"' + str(Path(new_directory) / Path(x).name)
-                )
-            except KeyError:
-                pass
+        for column in set(df.columns) & {
+            '"dataOrigin"',
+            '"dataStorage"',
+            '"spectraOrigin"',
+        }:
+            df[column] = df[column].apply(
+                lambda x: '"' + os.path.join(spectra_path, os.path.basename(x))
+            )
 
         # Write dataframe back to file
         with open(file_path, "w") as f:
