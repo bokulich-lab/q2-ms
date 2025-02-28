@@ -37,9 +37,9 @@ opt <- parse_args(optParser)
 
 # Load the XCMSExperiment or MsExperiment
 XCMSExperiment <- tryCatch({
-    readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment))
+    readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$spectra)
 }, error = function(e) {
-    readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment))
+    readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$spectra)
 })
 
 # Create paramter object for CentWave

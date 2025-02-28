@@ -2,7 +2,6 @@ import copy
 
 from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
 from q2_ms.utils import run_r_script
-from q2_ms.xcms.utils import change_data_paths
 
 
 def find_peaks_centwave(
@@ -31,9 +30,6 @@ def find_peaks_centwave(
 
     # Init XCMSExperimentDirFmt
     xcms_experiment_peaks = XCMSExperimentDirFmt()
-
-    # Change data paths in xcms experiment
-    change_data_paths(str(xcms_experiment), str(spectra))
 
     # Add output path to params
     params["output_path"] = str(xcms_experiment_peaks)
