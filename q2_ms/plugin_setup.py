@@ -15,6 +15,8 @@ from q2_ms.types._format import (
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    MSPDirFmt,
+    MSPFormat,
     SpectraSlotsFormat,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
@@ -23,7 +25,7 @@ from q2_ms.types._format import (
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
 )
-from q2_ms.types._type import XCMSExperiment
+from q2_ms.types._type import MSP, XCMSExperiment
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -40,12 +42,14 @@ plugin = Plugin(
 plugin.register_semantic_types(
     mzML,
     XCMSExperiment,
+    MSP,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
 plugin.register_semantic_type_to_format(
     XCMSExperiment, artifact_format=XCMSExperimentDirFmt
 )
+plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
 
 plugin.register_formats(
     mzMLFormat,
@@ -61,4 +65,6 @@ plugin.register_formats(
     XCMSExperimentFeatureDefinitionsFormat,
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
+    MSPFormat,
+    MSPDirFmt,
 )

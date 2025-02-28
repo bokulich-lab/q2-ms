@@ -10,6 +10,8 @@ from q2_ms.types._format import (
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    MSPDirFmt,
+    MSPFormat,
     SpectraSlotsFormat,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
@@ -38,4 +40,6 @@ __all__ = [
     "XCMSExperimentFeaturePeakIndexFormat",
     "XCMSExperimentJSONFormat",
     "XCMSExperiment",
+    "MSPFormat",
+    "MSPDirFmt",
 ]
