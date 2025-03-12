@@ -75,7 +75,7 @@ class MSBackendDataFormat(model.TextFileFormat):
         ] != "# MsBackendMzR":
             raise ValidationError(
                 "Header does not match MSBackendDataFormat. It must consist of the "
-                "following two line with at least these columns:\n"
+                "following two lines with at least these columns:\n"
                 "# MsBackendMzR\n" + "\t".join(header_exp) + "\n\nFound instead:\n"
                 f"{header_obs_1[0]}\n" + "\t".join(header_obs_2)
             )
@@ -232,8 +232,8 @@ class XCMSExperimentChromPeaksFormat(model.TextFileFormat):
 
         if not set(header_exp).issubset(set(header_obs)):
             raise ValidationError(
-                "Header does not match XCMSExperimentChromPeaksFormat. It must at least"
-                "consist of the following columns:\n"
+                "Header does not match XCMSExperimentChromPeaksFormat. It must at "
+                "least consist of the following columns:\n"
                 + ", ".join(header_exp)
                 + "\n\nFound instead:\n"
                 + ", ".join(header_obs)
