@@ -1,62 +1,16 @@
 import os
-import shutil
 
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_ms.xcms.utils import change_spectra_paths, create_fake_mzml_files
+from q2_ms.xcms.utils import create_fake_mzml_files
 
 
 class TestXCMSUtils(TestPluginBase):
     package = "q2_ms.xcms.tests"
 
-    def test_change_spectra_paths(self):
-        tmp = self.temp_dir.name
-        shutil.copy(self.get_data_path("change_spectra_paths/ms_backend_data.txt"), tmp)
-        shutil.copy(
-            self.get_data_path("change_spectra_paths/ms_experiment_sample_data.txt"),
-            tmp,
-        )
-
-        change_spectra_paths(xcms_experiment_path=tmp, spectra_path="test")
-
-        with (
-            open(os.path.join(tmp, "ms_backend_data.txt"), "r", encoding="utf-8") as f1,
-            open(
-                self.get_data_path("change_spectra_paths/ms_backend_data_changed.txt"),
-                "r",
-                encoding="utf-8",
-            ) as f2,
-        ):
-            self.assertTrue(f1.read() == f2.read())
-
-        with (
-            open(
-                os.path.join(tmp, "ms_experiment_sample_data.txt"),
-                "r",
-                encoding="utf-8",
-            ) as f1,
-            open(
-                self.get_data_path(
-                    "change_spectra_paths/ms_experiment_sample_data_changed.txt"
-                ),
-                "r",
-                encoding="utf-8",
-            ) as f2,
-        ):
-            self.assertTrue(f1.read() == f2.read())
-
     def test_create_fake_mzml_files(self):
         xcms_experiment_path = self.get_data_path("change_paths")
-        create_fake_mzml_files(xcms_experiment_path)
-        self.assertTrue(
-            os.path.exists(
-                "/private/var/folders/nj/rfpdzc_90zl3555cttz236_w0000gp/T/qiime2/"
-                "rischv/data/d1f25fbd-f167-409d-9e42-f46dc3445d32/data/KO/ko15.CDF"
-            )
-        )
-        self.assertTrue(
-            os.path.exists(
-                "/private/var/folders/nj/rfpdzc_90zl3555cttz236_w0000gp/T/qiime2/"
-                "rischv/data/d1f25fbd-f167-409d-9e42-f46dc3445d32/data/KO/ko16.CDF"
-            )
-        )
+        tmp_dir = self.temp_dir
+        create_fake_mzml_files(xcms_experiment_path, tmp_dir.name)
+        self.assertTrue(os.path.exists(os.path.join(tmp_dir.name, "ko15.CDF")))
+        self.assertTrue(os.path.exists(os.path.join(tmp_dir.name, "ko16.CDF")))
