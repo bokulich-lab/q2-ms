@@ -5,7 +5,37 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-from q2_ms.types._format import mzMLDirFmt, mzMLFormat
-from q2_ms.types._type import mzML
+from q2_ms.types._format import (
+    MSBackendDataFormat,
+    MSExperimentLinkMColsFormat,
+    MSExperimentSampleDataFormat,
+    MSExperimentSampleDataLinksSpectra,
+    SpectraSlotsFormat,
+    XCMSExperimentChromPeakDataFormat,
+    XCMSExperimentChromPeaksFormat,
+    XCMSExperimentDirFmt,
+    XCMSExperimentFeatureDefinitionsFormat,
+    XCMSExperimentFeaturePeakIndexFormat,
+    XCMSExperimentJSONFormat,
+    mzMLDirFmt,
+    mzMLFormat,
+)
+from q2_ms.types._type import XCMSExperiment, mzML
 
-__all__ = ["mzMLFormat", "mzMLDirFmt", "mzML"]
+__all__ = [
+    "mzMLFormat",
+    "mzMLDirFmt",
+    "mzML",
+    "MSBackendDataFormat",
+    "MSExperimentLinkMColsFormat",
+    "MSExperimentSampleDataFormat",
+    "MSExperimentSampleDataLinksSpectra",
+    "SpectraSlotsFormat",
+    "XCMSExperimentChromPeakDataFormat",
+    "XCMSExperimentChromPeaksFormat",
+    "XCMSExperimentDirFmt",
+    "XCMSExperimentFeatureDefinitionsFormat",
+    "XCMSExperimentFeaturePeakIndexFormat",
+    "XCMSExperimentJSONFormat",
+    "XCMSExperiment",
+]
