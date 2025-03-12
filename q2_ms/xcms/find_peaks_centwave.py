@@ -25,14 +25,11 @@ def find_peaks_centwave(
     verbose_beta_columns: bool = False,
     threads: int = 1,
 ) -> XCMSExperimentDirFmt:
-    # Create parameters dict
-    params = copy.copy(locals())
-
     # Init XCMSExperimentDirFmt
     xcms_experiment_peaks = XCMSExperimentDirFmt()
 
-    # Add output path to params
-    params["output_path"] = str(xcms_experiment_peaks)
+    # Create parameters dict
+    params = copy.copy(locals())
 
     # Run R script
     run_r_script(params, "find_peaks_centwave", "XCMS")

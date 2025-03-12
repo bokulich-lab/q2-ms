@@ -28,7 +28,7 @@ option_list <- list(
   make_option(opt_str = "--extend_length_msw", type = "logical"),
   make_option(opt_str = "--verbose_columns", type = "logical"),
   make_option(opt_str = "--verbose_beta_columns", type = "logical"),
-  make_option(opt_str = "--output_path", type = "character")
+  make_option(opt_str = "--xcms_experiment_peaks", type = "character")
 )
 
 # Parse arguments
@@ -68,4 +68,4 @@ XCMSExperiment <- findChromPeaks(
 )
 
 # Export the XCMSExperiment object to the directory format
-saveMsObject(XCMSExperiment, param = PlainTextParam(path = opt$output_path))
+saveMsObject(XCMSExperiment, param = PlainTextParam(path = opt$xcms_experiment_peaks))
