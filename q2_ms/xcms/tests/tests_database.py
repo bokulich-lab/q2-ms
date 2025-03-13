@@ -11,6 +11,7 @@ from unittest.mock import Mock, patch
 
 from qiime2.plugin.testing import TestPluginBase
 
+from q2_ms.types import MSPDirFmt
 from q2_ms.xcms.database import fetch_massbank
 
 
@@ -31,6 +32,7 @@ class TestmzMLFormats(TestPluginBase):
         # Check if the file exists
         file_path = os.path.join(str(result), "MassBank_NIST.msp")
         self.assertTrue(os.path.exists(file_path))
+        self.assertIsInstance(result, MSPDirFmt)
 
     @patch("q2_ms.xcms.database.requests.get")
     def test_fetch_massbank_error(self, mock_get):
