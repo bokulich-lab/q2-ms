@@ -13,6 +13,8 @@ from q2_ms.types._format import (
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    MSPDirFmt,
+    MSPFormat,
     SpectraSlotsFormat,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
@@ -224,4 +226,22 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_dir_fmt_positive(self):
         filepath = self.get_data_path("XCMSExperiment")
         format = XCMSExperimentDirFmt(filepath, mode="r")
+        format.validate()
+
+
+class TestMSPFormat(TestPluginBase):
+    package = "q2_ms.types.tests"
+
+    def test_msp_validate_positive(self):
+        format = MSPFormat(self.get_data_path("MSP_valid/valid.msp"), mode="r")
+        format.validate()
+
+    def test_msp_validate_negative(self):
+        format = MSPFormat(self.get_data_path("MSP_invalid/invalid.msp"), mode="r")
+        pattern = r"Line 6: Inv.+\nPrecursor_type \[M\+H\]\+\nLine 21: Peak.+\n311.0914"
+        with self.assertRaisesRegex(ValidationError, pattern):
+            format.validate()
+
+    def test_msp_directory_format_validate_positive(self):
+        format = MSPDirFmt(self.get_data_path("MSP_valid"), mode="r")
         format.validate()
