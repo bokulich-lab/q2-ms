@@ -22,7 +22,7 @@ from q2_ms.types._format import (
     mzMLDirFmt,
     mzMLFormat,
 )
-from q2_ms.types._type import XCMSExperiment, mzML
+from q2_ms.types._type import MSP, XCMSExperiment, mzML
 
 __all__ = [
     "mzMLFormat",
@@ -42,4 +42,5 @@ __all__ = [
     "XCMSExperiment",
     "MSPFormat",
     "MSPDirFmt",
+    "MSP",
 ]
