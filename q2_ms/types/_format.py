@@ -368,7 +368,7 @@ class MSPFormat(model.TextFileFormat):
             for i, line in enumerate(f):
                 line = line.strip()
 
-                # Ignore completely empty lines (used to separate spectra)
+                # Switch to metadata section at empty lines
                 if not line:
                     peak_section = False
                     continue
@@ -377,8 +377,7 @@ class MSPFormat(model.TextFileFormat):
                 if line.startswith("#"):
                     continue
 
-                # Peak data validation (must be m/z and intensity, whitespace or
-                # tab-separated, and allow additional values)
+                # Switch to peak section if pattern matches
                 if not peak_section and peak_pattern.match(line):
                     peak_section = True
 
@@ -388,7 +387,8 @@ class MSPFormat(model.TextFileFormat):
                         f"Line {i}: Invalid metadata format (should be 'key: value')."
                         f"\n{line}"
                     )
-
+                # Peak data validation (must be m/z and intensity, whitespace or
+                # tab-separated, and allow additional values)
                 if peak_section and len(line.split()) < 2:
                     errors.append(
                         f"Line {i}: Peak data must have at least m/z and intensity "
