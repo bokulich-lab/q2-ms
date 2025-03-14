@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -22,7 +22,7 @@ from q2_ms.types._format import (
     mzMLDirFmt,
     mzMLFormat,
 )
-from q2_ms.types._type import XCMSExperiment, mzML
+from q2_ms.types._type import MSP, XCMSExperiment, mzML
 
 __all__ = [
     "mzMLFormat",
@@ -42,4 +42,5 @@ __all__ = [
     "XCMSExperiment",
     "MSPFormat",
     "MSPDirFmt",
+    "MSP",
 ]
