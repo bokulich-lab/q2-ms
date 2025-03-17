@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -10,21 +10,27 @@ from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str, 
 from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
-from q2_ms.types import mzML, mzMLDirFmt, mzMLFormat
-from q2_ms.types._format import (
+from q2_ms.types import (
+    MSP,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    MSPDirFmt,
+    MSPFormat,
     SpectraSlotsFormat,
+    XCMSExperiment,
     XCMSExperimentChromPeakDataFormat,
     XCMSExperimentChromPeaksFormat,
     XCMSExperimentDirFmt,
     XCMSExperimentFeatureDefinitionsFormat,
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
+    mzML,
+    mzMLDirFmt,
+    mzMLFormat,
 )
-from q2_ms.types._type import XCMSExperiment
+from q2_ms.xcms.database import fetch_massbank
 from q2_ms.xcms.find_peaks_centwave import find_peaks_centwave
 
 citations = Citations.load("citations.bib", package="q2_ms")
@@ -36,6 +42,22 @@ plugin = Plugin(
     package="q2_ms",
     description="A QIIME 2 plugin for MS data processing.",
     short_description="A QIIME 2 plugin for MS data processing.",
+)
+
+plugin.methods.register_function(
+    function=fetch_massbank,
+    inputs={},
+    outputs=[("massbank", MSP)],
+    parameters={},
+    input_descriptions={},
+    output_descriptions={"massbank": "MassBank spectral library in NIST MSP format."},
+    parameter_descriptions={},
+    name="Fetch MassBank spectral library",
+    description=(
+        "Fetch the latest MassBank spectral library in NIST MSP format. It is "
+        "downloaded from github.com/MassBank/MassBank-data."
+    ),
+    citations=[],
 )
 
 I_find_peaks, O_find_peaks = TypeMap(
@@ -182,12 +204,14 @@ plugin.methods.register_function(
 plugin.register_semantic_types(
     mzML,
     XCMSExperiment,
+    MSP,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
 plugin.register_semantic_type_to_format(
     XCMSExperiment, artifact_format=XCMSExperimentDirFmt
 )
+plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
 
 plugin.register_formats(
     mzMLFormat,
@@ -203,4 +227,6 @@ plugin.register_formats(
     XCMSExperimentFeatureDefinitionsFormat,
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
+    MSPFormat,
+    MSPDirFmt,
 )

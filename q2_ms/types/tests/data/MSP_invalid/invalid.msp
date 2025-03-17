@@ -1,0 +1,142 @@
+Name: Scleroderolide
+Synon: furo[2',3':5,6]napho[1,8-BC]pyran-5,6-dione,8,9-dihydro-3,7-dihydroxy-1,8,8,9-tetramethyl-,(9S)-
+DB#: MSBNK-AAFC-AC000673
+InChIKey: MYDJDVOVZVSVIE-ZETCQYMHSA-N
+InChI: InChI=1S/C18H16O6/c1-6-5-8(19)15-10-9(6)16-12(18(3,4)7(2)23-16)13(20)11(10)14(21)17(22)24-15/h5,7,19-20H,1-4H3/t7-/m0/s1
+SMILES: C[C@H]1C(C2=C(O1)C3=C4C(=C2O)C(=O)C(=O)OC4=C(C=C3C)O)(C)C
+Precursor_type [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 329.1014
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 30(NCE)
+Formula: C18H16O6
+MW: 328
+ExactMass: 328.09468
+Comments: Parent=329.1014
+Splash: splash10-004i-0029000000-697b0c9ee7ed302c7acc
+Num Peaks: 4
+273.0393 163
+287.055 73
+311.0914
+329.102 999
+
+Name: Fumonisin B4
+DB#: MSBNK-AAFC-AC000658
+InChIKey: WYYKRDVIBOEORL-JLCKPESSSA-N
+InChI: InChI=1S/C34H59NO13/c1-5-6-14-22(3)32(48-31(42)20-25(34(45)46)18-29(39)40)27(47-30(41)19-24(33(43)44)17-28(37)38)16-21(2)13-11-9-7-8-10-12-15-26(36)23(4)35/h21-27,32,36H,5-20,35H2,1-4H3,(H,37,38)(H,39,40)(H,43,44)(H,45,46)/t21-,22+,23-,24+,25+,26-,27-,32+/m0/s1
+SMILES: CCCC[C@@H](C)[C@H]([C@H](C[C@@H](C)CCCCCCCC[C@@H]([C@H](C)N)O)OC(=O)C[C@@H](CC(=O)O)C(=O)O)OC(=O)C[C@@H](CC(=O)O)C(=O)O
+Precursor_type: [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 690.4054
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 10(NCE)
+Formula: C34H59NO13
+MW: 689
+ExactMass: 689.39863
+Comments: Parent=690.4054
+Splash: splash10-0006-0000009000-33df690fafeab8e7a329
+Num Peaks: 1
+690.4059 999
+
+Name: Chaetoglobosin A
+DB#: MSBNK-AAFC-AC000084
+InChIKey: OUMWCYMRLMEZJH-VOXRAUTJSA-N
+InChI: InChI=1S/C32H36N2O5/c1-17-8-7-10-22-29-31(4,39-29)19(3)27-24(15-20-16-33-23-11-6-5-9-21(20)23)34-30(38)32(22,27)26(36)13-12-25(35)28(37)18(2)14-17/h5-7,9-14,16-17,19,22,24,27-29,33,37H,8,15H2,1-4H3,(H,34,38)/b10-7+,13-12+,18-14+/t17-,19-,22-,24-,27-,28+,29-,31+,32+/m0/s1
+SMILES: C[C@H]\1C/C=C/[C@H]2[C@H]3[C@](O3)([C@H]([C@@H]4[C@@]2(C(=O)/C=C/C(=O)[C@@H](/C(=C1)/C)O)C(=O)N[C@H]4CC5=CNC6=CC=CC=C65)C)C
+Precursor_type: [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 529.2692
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 35(NCE)
+Formula: C32H36N2O5
+MW: 528
+ExactMass: 528.26243
+Comments: Parent=529.2692
+Splash: splash10-001i-0900000000-2857ff64730d968e7c86
+Num Peaks: 9
+81.0699 38
+107.0855 69
+109.0648 73
+130.0651 999
+132.0808 90
+135.0804 47
+157.1012 32
+185.0709 155
+200.107 48
+Name: Scleroderolide
+Synon: furo[2',3':5,6]napho[1,8-BC]pyran-5,6-dione,8,9-dihydro-3,7-dihydroxy-1,8,8,9-tetramethyl-,(9S)-
+DB#: MSBNK-AAFC-AC000673
+InChIKey: MYDJDVOVZVSVIE-ZETCQYMHSA-N
+InChI: InChI=1S/C18H16O6/c1-6-5-8(19)15-10-9(6)16-12(18(3,4)7(2)23-16)13(20)11(10)14(21)17(22)24-15/h5,7,19-20H,1-4H3/t7-/m0/s1
+SMILES: C[C@H]1C(C2=C(O1)C3=C4C(=C2O)C(=O)C(=O)OC4=C(C=C3C)O)(C)C
+Precursor_type [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 329.1014
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 30(NCE)
+Formula: C18H16O6
+MW: 328
+ExactMass: 328.09468
+Comments: Parent=329.1014
+Splash: splash10-004i-0029000000-697b0c9ee7ed302c7acc
+Num Peaks: 4
+273.0393 163
+287.055 73
+311.0914
+329.102 999
+
+Name: Fumonisin B4
+DB#: MSBNK-AAFC-AC000658
+InChIKey: WYYKRDVIBOEORL-JLCKPESSSA-N
+InChI: InChI=1S/C34H59NO13/c1-5-6-14-22(3)32(48-31(42)20-25(34(45)46)18-29(39)40)27(47-30(41)19-24(33(43)44)17-28(37)38)16-21(2)13-11-9-7-8-10-12-15-26(36)23(4)35/h21-27,32,36H,5-20,35H2,1-4H3,(H,37,38)(H,39,40)(H,43,44)(H,45,46)/t21-,22+,23-,24+,25+,26-,27-,32+/m0/s1
+SMILES: CCCC[C@@H](C)[C@H]([C@H](C[C@@H](C)CCCCCCCC[C@@H]([C@H](C)N)O)OC(=O)C[C@@H](CC(=O)O)C(=O)O)OC(=O)C[C@@H](CC(=O)O)C(=O)O
+Precursor_type: [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 690.4054
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 10(NCE)
+Formula: C34H59NO13
+MW: 689
+ExactMass: 689.39863
+Comments: Parent=690.4054
+Splash: splash10-0006-0000009000-33df690fafeab8e7a329
+Num Peaks: 1
+690.4059 999
+
+Name: Chaetoglobosin A
+DB#: MSBNK-AAFC-AC000084
+InChIKey: OUMWCYMRLMEZJH-VOXRAUTJSA-N
+InChI: InChI=1S/C32H36N2O5/c1-17-8-7-10-22-29-31(4,39-29)19(3)27-24(15-20-16-33-23-11-6-5-9-21(20)23)34-30(38)32(22,27)26(36)13-12-25(35)28(37)18(2)14-17/h5-7,9-14,16-17,19,22,24,27-29,33,37H,8,15H2,1-4H3,(H,34,38)/b10-7+,13-12+,18-14+/t17-,19-,22-,24-,27-,28+,29-,31+,32+/m0/s1
+SMILES: C[C@H]\1C/C=C/[C@H]2[C@H]3[C@](O3)([C@H]([C@@H]4[C@@]2(C(=O)/C=C/C(=O)[C@@H](/C(=C1)/C)O)C(=O)N[C@H]4CC5=CNC6=CC=CC=C65)C)C
+Precursor_type: [M+H]+
+Spectrum_type: MS2
+PrecursorMZ: 529.2692
+Instrument_type: LC-ESI-ITFT
+Instrument: Q-Exactive Orbitrap Thermo Scientific
+Ion_mode: POSITIVE
+Collision_energy: 35(NCE)
+Formula: C32H36N2O5
+MW: 528
+ExactMass: 528.26243
+Comments: Parent=529.2692
+Splash: splash10-001i-0900000000-2857ff64730d968e7c86
+Num Peaks: 9
+81.0699 38
+107.0855 69
+109.0648 73
+130.0651 999
+132.0808 90
+135.0804 47
+157.1012 32
+185.0709 155
+200.107 48
