@@ -5,8 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+from q2_types.metadata import ImmutableMetadata
 from q2_types.sample_data import SampleData
-from qiime2.core.type import Choices, Str, Visualization
 from qiime2.plugin import Citations, Plugin
 
 from q2_ms import __version__
@@ -31,7 +31,7 @@ from q2_ms.types import (
     mzMLFormat,
 )
 from q2_ms.xcms.database import fetch_massbank
-from q2_ms.xcms.metadata import chromatogram
+from q2_ms.xcms.metadata import create_spectral_metadata
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -60,40 +60,23 @@ plugin.methods.register_function(
     citations=[],
 )
 
-plugin.pipelines.register_function(
-    function=chromatogram,
+plugin.methods.register_function(
+    function=create_spectral_metadata,
     inputs={"xcms_experiment": XCMSExperiment},
-    outputs=[("chromatogram", Visualization)],
-    parameters={
-        "x_measure": Str,
-        "y_measure": Str,
-        "replicate_method": Str % Choices("none", "median", "mean"),
-        "group_by": Str,
-        "title": Str,
-    },
+    outputs=[("spectral_metadata", ImmutableMetadata)],
+    parameters={},
     input_descriptions={"xcms_experiment": "XCMSExperiment."},
-    output_descriptions={"chromatogram": "Visualization"},
-    parameter_descriptions={
-        "x_measure": (
-            "Numeric measure from the input Metadata that should be plotted on the "
-            "x-axis."
-        ),
-        "y_measure": (
-            "Numeric measure from the input Metadata that should be plotted on the "
-            "y-axis."
-        ),
-        "replicate_method": (
-            "The method for averaging replicates if present in the chosen `x_measure`. "
-            "Available methods are `median` and `mean`."
-        ),
-        "group_by": (
-            "Categorical measure from the input Metadata that should be used for "
-            "grouping the lineplot."
-        ),
-        "title": "The title of the lineplot.",
-    },
-    name="chromatogram",
-    description="chromatogram",
+    output_descriptions={"spectral_metadata": "Spectral metadata of all MS1 scans."},
+    parameter_descriptions={},
+    name="Create spectral metadata",
+    description=(
+        "This action creates a spectral metadata table from a XCMSExperiment artifact. "
+        "This metadata can be used to plot total ion chromatograms or base peak "
+        "chromatograms and other line and box plots with q2-vizard.\n\nNOTE:\nThe data "
+        "gets filtered by MS level and only MS1 scans are retained. Also the name of "
+        "the column defining the sample id in the sample data will get '_' added as a "
+        "suffix."
+    ),
     citations=[],
 )
 

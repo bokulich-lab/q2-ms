@@ -8,35 +8,16 @@
 import os
 
 import pandas as pd
-from qiime2 import Metadata
+import qiime2
+from qiime2.metadata.base import is_id_header
 
 from q2_ms.types import XCMSExperimentDirFmt
 
 
-def chromatogram(
-    ctx,
-    xcms_experiment,
-    x_measure,
-    y_measure=None,
-    replicate_method="none",
-    group_by=None,
-    title=None,
-):
-    lineplot = ctx.get_action("vizard", "lineplot")
-
-    df = create_metadata(str(xcms_experiment.view(XCMSExperimentDirFmt)))
-
-    vis = lineplot(
-        Metadata(df), x_measure, y_measure, replicate_method, group_by, title
-    )
-
-    return tuple(vis)
-
-
-def create_metadata(dir_fmt_path):
+def create_spectral_metadata(xcms_experiment: XCMSExperimentDirFmt) -> qiime2.Metadata:
     # Read the backend data file while skipping the first line
     backend_df = pd.read_csv(
-        os.path.join(dir_fmt_path, "ms_backend_data.txt"),
+        os.path.join(str(xcms_experiment), "ms_backend_data.txt"),
         sep="\t",
         skiprows=1,
         index_col=0,
@@ -44,13 +25,15 @@ def create_metadata(dir_fmt_path):
 
     # Read the sample data file
     sample_df = pd.read_csv(
-        os.path.join(dir_fmt_path, "ms_experiment_sample_data.txt"), sep="\t"
+        os.path.join(str(xcms_experiment), "ms_experiment_sample_data.txt"), sep="\t"
     )
     sample_df.drop(columns=["spectraOrigin"], inplace=True)
 
     # Read the links file that maps sample indices to spectra indices.
     links_df = pd.read_csv(
-        os.path.join(dir_fmt_path, "ms_experiment_sample_data_links_spectra.txt"),
+        os.path.join(
+            str(xcms_experiment), "ms_experiment_sample_data_links_spectra.txt"
+        ),
         sep="\t",
         header=None,
         names=["sample_id", "spectra_index"],
@@ -76,4 +59,25 @@ def create_metadata(dir_fmt_path):
     if "centroided" in merged_df.columns:
         merged_df["centroided"] = merged_df["centroided"].astype(str)
 
-    return merged_df
+    # Filter data by MS level
+    merged_df = merged_df.loc[merged_df["msLevel"] == 1]
+
+    # Adds "_" to column name if it is a reserved metadata index name
+    merged_df.columns = [
+        col + "_" if is_id_header(col) else col for col in merged_df.columns
+    ]
+
+    # Drop columns that only contain information about MS2 scans
+    columns_to_drop = [
+        "precScanNum",
+        "precursorMz",
+        "precursorIntensity",
+        "precursorCharge",
+        "collisionEnergy",
+        "isolationWindowLowerMz",
+        "isolationWindowTargetMz",
+        "isolationWindowUpperMz",
+    ]
+    merged_df.drop(columns=[col for col in columns_to_drop if col in merged_df.columns])
+
+    return qiime2.Metadata(merged_df)

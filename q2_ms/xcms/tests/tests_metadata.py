@@ -5,18 +5,39 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import pandas as pd
+from pandas._testing import assert_frame_equal
 from qiime2.plugin.testing import TestPluginBase
 
-from q2_ms.xcms.metadata import create_metadata
+from q2_ms.types import XCMSExperimentDirFmt
+from q2_ms.xcms.metadata import create_spectral_metadata
 
 
 class TestMetadata(TestPluginBase):
-    package = "q2_ms.types.tests"
+    package = "q2_ms.xcms.tests"
 
+    def test_create_spectral_metadata(self):
+        xcms_experiment = XCMSExperimentDirFmt(self.get_data_path("metadata"), "r")
+        obs = create_spectral_metadata(xcms_experiment)
+        exp = pd.read_csv(
+            self.get_data_path("metadata_expected/spectral_metadata.tsv"),
+            sep="\t",
+            index_col=0,
+        )
+        exp.index = exp.index.astype(str)
+        columns_to_convert = [
+            "msLevel",
+            "acquisitionNum",
+            "polarity",
+            "peaksCount",
+            "ionisationEnergy",
+            "injectionTime",
+            "scanWindowLowerLimit",
+            "scanWindowUpperLimit",
+            "scanIndex",
+            "sample_id",
+        ]
+        exp[columns_to_convert] = exp[columns_to_convert].astype("float64")
+        exp["centroided"] = exp["centroided"].astype("str")
 
-def test_create_metadata():
-    df = create_metadata(
-        "/Users/rischv/Documents/data/metabolomics/xcms_test_data_mzml/"
-        "out_R_rt_correction_filtered"
-    )
-    print(df)
+        assert_frame_equal(obs.to_dataframe(), exp)
