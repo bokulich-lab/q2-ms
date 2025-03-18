@@ -41,10 +41,13 @@ def create_metadata(dir_fmt_path):
         skiprows=1,
         index_col=0,
     )
+
     # Read the sample data file
     sample_df = pd.read_csv(
         os.path.join(dir_fmt_path, "ms_experiment_sample_data.txt"), sep="\t"
     )
+    sample_df.drop(columns=["spectraOrigin"], inplace=True)
+
     # Read the links file that maps sample indices to spectra indices.
     links_df = pd.read_csv(
         os.path.join(dir_fmt_path, "ms_experiment_sample_data_links_spectra.txt"),
@@ -56,25 +59,21 @@ def create_metadata(dir_fmt_path):
     # Merge the backend data with the links data using the spectra_index.
     merged_df = backend_df.join(links_df.set_index("spectra_index"), how="left")
 
-    # Create the new sample_name column by mapping the sample_id to the sample_name
-    # from sample_df
-    # merged_df["sample_name"] = merged_df["sample_id"].map(sample_df["sample_name"])
-    sample_df_filtered = sample_df.drop(columns=["spectraOrigin"])
+    # Merge the merged_df with the sample_df using the sample_id.
+    merged_df = merged_df.join(sample_df, on="sample_id")
 
-    merged_df = merged_df.join(sample_df_filtered, on="sample_id")
-
-    # Creates new column that shows teh difference between rtime and the adjusted rtime
+    # Create new column that shows the difference between rtime and the adjusted rtime
     if "rtime_adjusted" in merged_df.columns:
         merged_df["rtime_adjusted-rtime"] = (
             merged_df["rtime_adjusted"] - merged_df["rtime"]
         )
 
+    # Set index to str
     merged_df.index.name = "id"
     merged_df.index = merged_df.index.astype(str)
 
+    # Set column centroided to str
     if "centroided" in merged_df.columns:
         merged_df["centroided"] = merged_df["centroided"].astype(str)
-
-    merged_df.rename(columns={"sampleid": "sample"}, inplace=True)
 
     return merged_df
