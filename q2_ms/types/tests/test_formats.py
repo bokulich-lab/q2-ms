@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -57,7 +57,15 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_ms_backend_data_format_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_experiment_link_mcols.txt")
         format = MSBackendDataFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            ".*Header does not match MSBackendDataFormat\\. .*\\n# MsBackendMzR\\n"
+            "msLevel\\trtime\\tacquisitionNum\\tdataOrigin\\tpolarity\\tprecScanNum"
+            "\\tprecursorMz\\tprecursorIntensity\\tprecursorCharge\\tcollisionEnergy"
+            "\\tpeaksCount\\ttotIonCurrent\\tbasePeakMZ\\tbasePeakIntensity"
+            "\\tionisationEnergy\\tlowMZ\\thighMZ\\tinjectionTime\\tspectrumId"
+            "\\tdataStorage\\tscanIndex\\n\\nFound instead:\\nsubsetBy\\n1\\t1\\.1",
+        ):
             format.validate()
 
     def test_ms_experiment_link_mcols_validate_positive(self):
@@ -68,7 +76,11 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_ms_experiment_link_mcols_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = MSExperimentLinkMColsFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            ".*Header does not match MSExperimentLinkMColsFormat\\..*:\\n"
+            '"subsetBy"\\n\\nFound instead:\\n# MsBackendMzR',
+        ):
             format.validate()
 
     def test_ms_experiment_sample_data_links_spectra_validate_positive(self):
@@ -81,7 +93,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_ms_experiment_sample_data_links_spectra_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = MSExperimentSampleDataLinksSpectra(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(ValidationError, ".*MSExperimentLinkMColsFormat.*"):
             format.validate()
 
     def test_ms_experiment_sample_data_validate_positive(self):
@@ -92,7 +104,10 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_ms_experiment_sample_data_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = MSExperimentSampleDataFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            ".*MSExperimentSampleDataFormat.*\\n\\nFound instead:\\n# MsBackendMzR",
+        ):
             format.validate()
 
     def test_xcms_experiment_json_queue_validate_positive(self):
@@ -110,7 +125,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_spectra_processing_queue_validate_negative_json(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentJSONFormat(filepath, mode="r")
-        with self.assertRaisesRegex(ValidationError, "JSON"):
+        with self.assertRaisesRegex(ValidationError, "File is not valid JSON"):
             format.validate()
 
     def test_spectra_processing_queue_validate_negative_list(self):
@@ -118,7 +133,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
             "XCMSExperiment_json_invalid/spectra_processing_queue_list_check.json"
         )
         format = XCMSExperimentJSONFormat(filepath, mode="r")
-        with self.assertRaisesRegex(ValidationError, "list"):
+        with self.assertRaisesRegex(ValidationError, "XCMSExperimentJSONFormat.*list"):
             format.validate()
 
     def test_spectra_processing_queue_validate_negative_keys(self):
@@ -126,7 +141,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
             "XCMSExperiment_json_invalid/spectra_processing_queue_keys_check.json"
         )
         format = XCMSExperimentJSONFormat(filepath, mode="r")
-        with self.assertRaisesRegex(ValidationError, "keys"):
+        with self.assertRaisesRegex(ValidationError, "XCMSExperimentJSONFormat.*keys"):
             format.validate()
 
     def test_spectra_slots_validate_positive(self):
@@ -137,7 +152,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_spectra_slots_validate_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = SpectraSlotsFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(ValidationError, "SpectraSlotsFormat"):
             format.validate()
 
     def test_xcms_experiment_chrom_peak_data_positive(self):
@@ -150,7 +165,11 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_chrom_peak_data_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentChromPeakDataFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "XCMSExperimentChromPeakDataFormat.*\\nms_level, is_filled\\n\\n"
+            "Found instead:\\n# MsBackendMzR",
+        ):
             format.validate()
 
     def test_xcms_experiment_chrom_peaks_positive(self):
@@ -161,7 +180,12 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_chrom_peaks_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentChromPeaksFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "XCMSExperimentChromPeaksFormat.*\\nmz, mzmin, mzmax, rt, rtmin, "
+            "rtmax, into, intb, maxo, sn, sample\\n\\n"
+            "Found instead:\\n# MsBackendMzR",
+        ):
             format.validate()
 
     def test_xcms_experiment_feature_definitions_positive(self):
@@ -174,7 +198,12 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_feature_definitions_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentFeatureDefinitionsFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "XCMSExperimentFeatureDefinitionsFormat.*\\nmzmed, mzmin, mzmax, "
+            "rtmed, rtmin, rtmax, npeaks, peakidx, ms_level\\n\\n"
+            "Found instead:\\n# MsBackendMzR",
+        ):
             format.validate()
 
     def test_xcms_experiment_feature_peak_index_positive(self):
@@ -187,7 +216,11 @@ class TestXCMSExperimentFormats(TestPluginBase):
     def test_xcms_experiment_feature_peak_index_negative(self):
         filepath = self.get_data_path("XCMSExperiment/ms_backend_data.txt")
         format = XCMSExperimentFeaturePeakIndexFormat(filepath, mode="r")
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "XCMSExperimentFeaturePeakIndexFormat.*\\nfeature_index, "
+            "peak_index\\n\\nFound instead:\\n# MsBackendMzR",
+        ):
             format.validate()
 
     def test_xcms_experiment_dir_fmt_positive(self):

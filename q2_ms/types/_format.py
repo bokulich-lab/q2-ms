@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -76,7 +76,7 @@ class MSBackendDataFormat(model.TextFileFormat):
         ] != "# MsBackendMzR":
             raise ValidationError(
                 "Header does not match MSBackendDataFormat. It must consist of the "
-                "following two line with at least these columns:\n"
+                "following two lines with at least these columns:\n"
                 "# MsBackendMzR\n" + "\t".join(header_exp) + "\n\nFound instead:\n"
                 f"{header_obs_1[0]}\n" + "\t".join(header_obs_2)
             )
@@ -233,8 +233,8 @@ class XCMSExperimentChromPeaksFormat(model.TextFileFormat):
 
         if not set(header_exp).issubset(set(header_obs)):
             raise ValidationError(
-                "Header does not match XCMSExperimentChromPeaksFormat. It must at least"
-                "consist of the following columns:\n"
+                "Header does not match XCMSExperimentChromPeaksFormat. It must at "
+                "least consist of the following columns:\n"
                 + ", ".join(header_exp)
                 + "\n\nFound instead:\n"
                 + ", ".join(header_obs)
@@ -368,7 +368,7 @@ class MSPFormat(model.TextFileFormat):
             for i, line in enumerate(f):
                 line = line.strip()
 
-                # Ignore completely empty lines (used to separate spectra)
+                # Switch to metadata section at empty lines
                 if not line:
                     peak_section = False
                     continue
@@ -377,8 +377,7 @@ class MSPFormat(model.TextFileFormat):
                 if line.startswith("#"):
                     continue
 
-                # Peak data validation (must be m/z and intensity, whitespace or
-                # tab-separated, and allow additional values)
+                # Switch to peak section if pattern matches
                 if not peak_section and peak_pattern.match(line):
                     peak_section = True
 
@@ -388,7 +387,8 @@ class MSPFormat(model.TextFileFormat):
                         f"Line {i}: Invalid metadata format (should be 'key: value')."
                         f"\n{line}"
                     )
-
+                # Peak data validation (must be m/z and intensity, whitespace or
+                # tab-separated, and allow additional values)
                 if peak_section and len(line.split()) < 2:
                     errors.append(
                         f"Line {i}: Peak data must have at least m/z and intensity "
