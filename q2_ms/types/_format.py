@@ -403,3 +403,26 @@ class MSPFormat(model.TextFileFormat):
 
 
 MSPDirFmt = model.SingleFileDirectoryFormat("MSPDirFmt", r".+\.msp$", MSPFormat)
+
+
+class MatchedSpectraFormat(model.TextFileFormat):
+    def _validate(self):
+        header_exp = [".original_query_index", "target_spectrum_id", "score"]
+        header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
+
+        if not set(header_exp).issubset(set(header_obs)):
+            raise ValidationError(
+                "Header does not match MatchedSpectraFormat. It must "
+                "at least consist of the following columns:\n"
+                + ", ".join(header_exp)
+                + "\n\nFound instead:\n"
+                + ", ".join(header_obs)
+            )
+
+    def _validate_(self, level):
+        self._validate()
+
+
+MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
+    "MatchedSpectraDirFmt", "matched_spectra.txt", MatchedSpectraFormat
+)
