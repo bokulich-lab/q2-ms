@@ -9,6 +9,8 @@ from qiime2.core.exceptions import ValidationError
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_ms.types._format import (
+    MatchedSpectraDirFmt,
+    MatchedSpectraFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -244,4 +246,31 @@ class TestMSPFormat(TestPluginBase):
 
     def test_msp_directory_format_validate_positive(self):
         format = MSPDirFmt(self.get_data_path("MSP_valid"), mode="r")
+        format.validate()
+
+
+class TestMatchedSpectra(TestPluginBase):
+    package = "q2_ms.types.tests"
+
+    def test_matched_spectra_format_validate_positive(self):
+        format = MatchedSpectraFormat(
+            self.get_data_path("MatchedSpectra_valid/matched_spectra.txt"), mode="r"
+        )
+        format.validate()
+
+    def test_matched_spectra_format_validate_negative(self):
+        format = MatchedSpectraFormat(
+            self.get_data_path("MatchedSpectra_invalid/matched_spectra.txt"), mode="r"
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            "MatchedSpectraFormat.*\\n.original_query_index, target_spectrum_id, "
+            "score\\n\\nFound instead:\\n.original_query_index, target_spectrum_id",
+        ):
+            format.validate()
+
+    def test_matched_spectra_directory_format_validate_positive(self):
+        format = MatchedSpectraDirFmt(
+            self.get_data_path("MatchedSpectra_valid"), mode="r"
+        )
         format.validate()
