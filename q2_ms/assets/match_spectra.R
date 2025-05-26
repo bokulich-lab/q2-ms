@@ -11,20 +11,25 @@ library(MSnbase)
 option_list <- list(
   make_option(opt_str = "--spectra", type = "character"),
   make_option(opt_str = "--xcms_experiment", type = "character"),
-  make_option(opt_str = "--mapfun", type = "numeric"),
+  make_option(opt_str = "--target_spectra", type = "character"),
+  make_option(opt_str = "--map_fun", type = "character"),
+  make_option(opt_str = "--type_join", type = "character"),
   make_option(opt_str = "--tolerance", type = "numeric"),
   make_option(opt_str = "--ppm", type = "numeric"),
-  make_option(opt_str = "--fun", type = "numeric"),
+  make_option(opt_str = "--fun", type = "character"),
+  make_option(opt_str = "--fun_m", type = "numeric"),
+  make_option(opt_str = "--fun_n", type = "numeric"),
+  make_option(opt_str = "--fun_na_rm", type = "logical"),
   make_option(opt_str = "--require_precursor", type = "numeric"),
   make_option(opt_str = "--require_precursor_peak", type = "numeric"),
-  make_option(opt_str = "--threshfun", type = "character"),
+  make_option(opt_str = "--thresh_fun", type = "character"),
   make_option(opt_str = "--tolerance_rt", type = "integer"),
   make_option(opt_str = "--percent_rt", type = "numeric"),
   make_option(opt_str = "--scale_peaks", type = "logical"),
   make_option(opt_str = "--filter_intensity", type = "numeric"),
   make_option(opt_str = "--filter_num_peaks", type = "integer"),
   make_option(opt_str = "--threads", type = "integer"),
-  make_option(opt_str = "--matches", type = "character")
+  make_option(opt_str = "--matched_spectra", type = "character")
 )
 
 # Parse arguments
@@ -38,18 +43,19 @@ XCMSExperiment <- readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experim
 querySpectra <- chromPeakSpectra(XCMSExperiment, return.type = "Spectra")
 
 # Load the target spectra library
-targetSpectra <- Spectra(opt$target, source = MsBackendMsp(), BPPARAM=MulticoreParam(workers=opt$threads))
+targetSpectra <- Spectra(opt$target_spectra, source = MsBackendMsp(), BPPARAM=MulticoreParam(workers=opt$threads))
 
 # Filter intensity
-if (opt$scale_peaks) {
-    querySpectra <- filterIntensity(querySpectra, intensity = opt$filter_intensity)
-    targetSpectra <- filterIntensity(targetSpectra, intensity = opt$filter_intensity)
+if (opt$filter_intensity) {
+    low_int <- function(x) {x > max(x, na.rm = TRUE) * opt$filter_intensity}
+    querySpectra <- filterIntensity(querySpectra, intensity = low_int)
+    targetSpectra <- filterIntensity(targetSpectra, intensity = low_int)
 }
 
 # Filter num peaks per spectra
-if (opt$scale_peaks) {
-    querySpectra <- pest_ms2[lengths(pest_ms2) > opt$filter_num_peaks]
-    targetSpectra <- pest_ms2[lengths(pest_ms2) > opt$filter_num_peaks]
+if (opt$filter_num_peaks) {
+    querySpectra <- querySpectra[lengths(querySpectra) > opt$filter_num_peaks]
+    targetSpectra <- targetSpectra[lengths(targetSpectra) > opt$filter_num_peaks]
 }
 
 # Scale the peaks
@@ -60,13 +66,17 @@ if (opt$scale_peaks) {
 
 # Create paramter object for CentWave
 CompareSpectraParams <- CompareSpectraParam(
-  MAPFUN = opt$mapfun,
+  MAPFUN = match.fun(opt$map_fun),
+  type = opt$type_join,
   tolerance = opt$tolerance,
   ppm = opt$ppm,
-  FUN = opt$fun,
+  FUN = match.fun(opt$fun),
+  n = opt$fun_n,
+  m = opt$fun_m,
+  na.rm = opt$fun_na_rm,
   requirePrecursor =  opt$require_precursor,
   requirePrecursorPeak = opt$require_precursor_peak,
-  THRESHFUN = opt$threshfun,
+  THRESHFUN = eval(parse(text = opt$thresh_fun)),
   toleranceRt = opt$tolerance_rt,
   percentRt = opt$percent_rt,
 )
@@ -78,5 +88,14 @@ matchedSpectra <- matchSpectra(
   param = CompareSpectraParams,
 )
 
-# Export the XCMSExperiment object to the directory format
-saveMsObject(XCMSExperiment, param = PlainTextParam(path = opt$xcms_experiment_peaks))
+matched_df <- matchedData(mtch)
+list_cols <- sapply(matched_df, is.list)
+
+matched_df[list_cols] <- lapply(matched_df[list_cols], function(col) {
+  sapply(col, paste, collapse = ";")
+})
+
+# Write to disk
+write.table(matched_df,
+            file = file.path(opt$matched_spectra, "matched_spectra.txt"),
+            sep = "\t", row.names = FALSE, quote = FALSE)
