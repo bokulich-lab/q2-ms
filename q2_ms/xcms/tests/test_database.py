@@ -15,8 +15,8 @@ from q2_ms.types import MSPDirFmt
 from q2_ms.xcms.database import fetch_massbank
 
 
-class TestmzMLFormats(TestPluginBase):
-    package = "q2_ms.types.tests"
+class TestFetchMassbank(TestPluginBase):
+    package = "q2_ms.xcms.tests"
 
     @patch("q2_ms.xcms.database.requests.get")
     def test_fetch_massbank(self, mock_get):
