@@ -11,6 +11,9 @@ from qiime2.plugin import Citations, Plugin
 from q2_ms import __version__
 from q2_ms.types import (
     MSP,
+    MatchedSpectra,
+    MatchedSpectraDirFmt,
+    MatchedSpectraFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -63,6 +66,7 @@ plugin.register_semantic_types(
     mzML,
     XCMSExperiment,
     MSP,
+    MatchedSpectra,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
@@ -70,6 +74,10 @@ plugin.register_semantic_type_to_format(
     XCMSExperiment, artifact_format=XCMSExperimentDirFmt
 )
 plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
+plugin.register_semantic_type_to_format(
+    MatchedSpectra, artifact_format=MatchedSpectraDirFmt
+)
+
 
 plugin.register_formats(
     mzMLFormat,
@@ -87,4 +95,6 @@ plugin.register_formats(
     XCMSExperimentJSONFormat,
     MSPFormat,
     MSPDirFmt,
+    MatchedSpectraFormat,
+    MatchedSpectraDirFmt,
 )

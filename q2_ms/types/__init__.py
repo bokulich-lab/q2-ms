@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from q2_ms.types._format import (
+    MatchedSpectraDirFmt,
+    MatchedSpectraFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -22,7 +24,7 @@ from q2_ms.types._format import (
     mzMLDirFmt,
     mzMLFormat,
 )
-from q2_ms.types._type import MSP, XCMSExperiment, mzML
+from q2_ms.types._type import MSP, MatchedSpectra, XCMSExperiment, mzML
 
 __all__ = [
     "mzMLFormat",
@@ -43,4 +45,7 @@ __all__ = [
     "MSPFormat",
     "MSPDirFmt",
     "MSP",
+    "MatchedSpectraFormat",
+    "MatchedSpectraDirFmt",
+    "MatchedSpectra",
 ]

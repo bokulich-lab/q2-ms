@@ -11,3 +11,4 @@ from qiime2.core.type import SemanticType
 mzML = SemanticType("mzML", variant_of=SampleData.field["type"])
 XCMSExperiment = SemanticType("XCMSExperiment")
 MSP = SemanticType("MSP")
+MatchedSpectra = SemanticType("MatchedSpectra_valid")

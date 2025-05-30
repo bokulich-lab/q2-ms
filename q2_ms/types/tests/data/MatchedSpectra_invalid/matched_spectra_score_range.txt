@@ -1,0 +1,2 @@
+.original_query_index	target_spectrum_id	score
+1	2	16
