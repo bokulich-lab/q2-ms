@@ -258,6 +258,13 @@ class TestMatchedSpectra(TestPluginBase):
         )
         format.validate()
 
+    def test_matched_spectra_format_validate_positive_min(self):
+        format = MatchedSpectraFormat(
+            self.get_data_path("MatchedSpectra_invalid/matched_spectra_min.txt"),
+            mode="r",
+        )
+        format.validate("min")
+
     def test_matched_spectra_format_validate_negative_header(self):
         format = MatchedSpectraFormat(
             self.get_data_path("MatchedSpectra_invalid/matched_spectra_header.txt"),
@@ -286,7 +293,7 @@ class TestMatchedSpectra(TestPluginBase):
             mode="r",
         )
         with self.assertRaisesRegex(
-            ValidationError, "Line 2 has out-of-range score: 16"
+            ValidationError, "Line 2 has an out-of-range score: 16.0"
         ):
             format.validate()
 

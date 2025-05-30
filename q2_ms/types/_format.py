@@ -406,15 +406,15 @@ MSPDirFmt = model.SingleFileDirectoryFormat("MSPDirFmt", r".+\.msp$", MSPFormat)
 
 
 class MatchedSpectraFormat(model.TextFileFormat):
-    def _validate(self):
+    def _validate(self, lines=None):
         header_exp = [".original_query_index", "target_spectrum_id", "score"]
 
         with open(str(self), "r") as f:
-            for line_num, line in enumerate(f, 1):
+            for i, line in enumerate(f, 1):
                 parts = line.rstrip("\n").split("\t")
 
                 # Header check
-                if line_num == 1:
+                if i == 1:
                     if parts != header_exp:
                         raise ValidationError(
                             "Header does not match MatchedSpectraFormat. It must "
@@ -427,7 +427,7 @@ class MatchedSpectraFormat(model.TextFileFormat):
 
                 # Column count check
                 if len(parts) != 3:
-                    raise ValidationError(f"Line {line_num} does not have 3 columns.")
+                    raise ValidationError(f"Line {i} does not have 3 columns.")
 
                 # Score value check
                 try:
@@ -435,15 +435,17 @@ class MatchedSpectraFormat(model.TextFileFormat):
                     if not (0 <= score <= 1):
                         raise ValidationError(
                             "The values in the score column have to be between 0 and "
-                            f"1. Line {line_num} has an out-of-range score: {score}"
+                            f"1. Line {i} has an out-of-range score: {score}"
                         )
                 except ValueError:
                     raise ValidationError(
-                        f"Line {line_num} has a non-numeric score: {parts[2]}"
+                        f"Line {i} has a non-numeric score: {parts[2]}"
                     )
+                if lines is not None and i - 1 >= lines:
+                    break
 
     def _validate_(self, level):
-        self._validate()
+        self._validate({"min": 50, "max": None}[level])
 
 
 MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
