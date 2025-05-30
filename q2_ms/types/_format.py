@@ -408,16 +408,39 @@ MSPDirFmt = model.SingleFileDirectoryFormat("MSPDirFmt", r".+\.msp$", MSPFormat)
 class MatchedSpectraFormat(model.TextFileFormat):
     def _validate(self):
         header_exp = [".original_query_index", "target_spectrum_id", "score"]
-        header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
 
-        if not set(header_exp).issubset(set(header_obs)):
-            raise ValidationError(
-                "Header does not match MatchedSpectraFormat. It must "
-                "at least consist of the following columns:\n"
-                + ", ".join(header_exp)
-                + "\n\nFound instead:\n"
-                + ", ".join(header_obs)
-            )
+        with open(str(self), "r") as f:
+            for line_num, line in enumerate(f, 1):
+                parts = line.rstrip("\n").split("\t")
+
+                # Header check
+                if line_num == 1:
+                    if parts != header_exp:
+                        raise ValidationError(
+                            "Header does not match MatchedSpectraFormat. It must "
+                            "at least consist of the following columns:\n"
+                            + ", ".join(header_exp)
+                            + "\n\nFound instead:\n"
+                            + ", ".join(parts)
+                        )
+                    continue
+
+                # Column count check
+                if len(parts) != 3:
+                    raise ValidationError(f"Line {line_num} does not have 3 columns.")
+
+                # Score value check
+                try:
+                    score = float(parts[2])
+                    if not (0 <= score <= 1):
+                        raise ValidationError(
+                            "The values in the score column have to be between 0 and "
+                            f"1. Line {line_num} has an out-of-range score: {score}"
+                        )
+                except ValueError:
+                    raise ValidationError(
+                        f"Line {line_num} has a non-numeric score: {parts[2]}"
+                    )
 
     def _validate_(self, level):
         self._validate()
