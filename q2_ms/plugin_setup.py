@@ -5,6 +5,7 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+from q2_types.metadata import ImmutableMetadata
 from q2_types.sample_data import SampleData
 from qiime2.plugin import Citations, Plugin
 
@@ -33,6 +34,7 @@ from q2_ms.types import (
     mzMLFormat,
 )
 from q2_ms.xcms.database import fetch_massbank
+from q2_ms.xcms.metadata import create_spectral_metadata
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -57,6 +59,26 @@ plugin.methods.register_function(
     description=(
         "Fetch the latest MassBank spectral library in NIST MSP format. It is "
         "downloaded from github.com/MassBank/MassBank-data."
+    ),
+    citations=[],
+)
+
+plugin.methods.register_function(
+    function=create_spectral_metadata,
+    inputs={"xcms_experiment": XCMSExperiment},
+    outputs=[("spectral_metadata", ImmutableMetadata)],
+    parameters={},
+    input_descriptions={"xcms_experiment": "XCMSExperiment."},
+    output_descriptions={"spectral_metadata": "Spectral metadata of all MS1 scans."},
+    parameter_descriptions={},
+    name="Create spectral metadata",
+    description=(
+        "This action creates a spectral metadata table from a XCMSExperiment artifact. "
+        "This metadata can be used to plot total ion chromatograms or base peak "
+        "chromatograms and other line and box plots with q2-vizard.\n\nNOTE:\nThe data "
+        "gets filtered by MS level and only MS1 scans are retained. Also the name of "
+        "the column defining the sample id in the sample data will get '_' added as a "
+        "suffix."
     ),
     citations=[],
 )
