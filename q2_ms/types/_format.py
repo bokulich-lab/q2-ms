@@ -403,3 +403,51 @@ class MSPFormat(model.TextFileFormat):
 
 
 MSPDirFmt = model.SingleFileDirectoryFormat("MSPDirFmt", r".+\.msp$", MSPFormat)
+
+
+class MatchedSpectraFormat(model.TextFileFormat):
+    def _validate(self, lines=None):
+        header_exp = [".original_query_index", "target_spectrum_id", "score"]
+
+        with open(str(self), "r") as f:
+            for i, line in enumerate(f, 1):
+                parts = line.rstrip("\n").split("\t")
+
+                # Header check
+                if i == 1:
+                    if parts != header_exp:
+                        raise ValidationError(
+                            "Header does not match MatchedSpectraFormat. It must "
+                            "at least consist of the following columns:\n"
+                            + ", ".join(header_exp)
+                            + "\n\nFound instead:\n"
+                            + ", ".join(parts)
+                        )
+                    continue
+
+                # Column count check
+                if len(parts) != 3:
+                    raise ValidationError(f"Line {i} does not have 3 columns.")
+
+                # Score value check
+                try:
+                    score = float(parts[2])
+                    if not (0 <= score <= 1):
+                        raise ValidationError(
+                            "The values in the score column have to be between 0 and "
+                            f"1. Line {i} has an out-of-range score: {score}"
+                        )
+                except ValueError:
+                    raise ValidationError(
+                        f"Line {i} has a non-numeric score: {parts[2]}"
+                    )
+                if lines is not None and i - 1 >= lines:
+                    break
+
+    def _validate_(self, level):
+        self._validate({"min": 50, "max": None}[level])
+
+
+MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
+    "MatchedSpectraDirFmt", "matched_spectra.txt", MatchedSpectraFormat
+)

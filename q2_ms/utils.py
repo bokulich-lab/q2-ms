@@ -1,5 +1,10 @@
-import importlib
-import os
+# ----------------------------------------------------------------------------
+# Copyright (c) 2025, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
 import subprocess
 
 EXTERNAL_CMD_WARNING = (
@@ -20,22 +25,34 @@ def run_command(cmd, cwd, verbose=True, env=None):
 
 
 def run_r_script(params, script_name, package_name):
-    script_path = str(importlib.resources.files("q2_ms") / f"assets/{script_name}.R")
-    cmd = ["/usr/local/bin/Rscript", "--vanilla", script_path]
+    """
+    Constructs a command-line call to an R script with parameters passed as
+    command-line flags and executes it.
+
+    Parameters
+        params : dict
+            A dictionary of parameter names and values to be passed as
+            command-line arguments to the R script.
+        script_name : str
+            The base name of the R script (without the `.R` extension path).
+            The script is assumed to be located at q2_ms/assets and registered in
+            pyproject.toml.
+        package_name : str
+            The name of the R package being invoked, used for error messaging.
+
+    Raises
+        Exception
+            If the R script returns a non-zero exit status, an Exception is raised
+            with the relevant package name and return code.
+    """
+    cmd = [f"{script_name}.R"]
 
     for key, value in params.items():
-        cmd.extend([f"--{key}", str(value)])
-
-    # Add /usr/local/bin to PATH to use system installation of Rscript
-    env = os.environ.copy()
-    env["PATH"] = "/usr/local/bin:" + env["PATH"]
-
-    # Unset Conda-related R variables to prevent it from overriding the system R library
-    for var in ["R_LIBS", "R_LIBS_USER", "R_HOME", "CONDA_PREFIX"]:
-        env.pop(var, None)
+        if value is not None:
+            cmd.extend([f"--{key}", str(value)])
 
     try:
-        run_command(cmd, verbose=True, cwd=None, env=env)
+        run_command(cmd, verbose=True, cwd=None)
     except subprocess.CalledProcessError as e:
         raise Exception(
             f"An error was encountered while running {package_name}, "
