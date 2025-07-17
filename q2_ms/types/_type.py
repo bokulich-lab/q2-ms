@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -10,3 +10,5 @@ from qiime2.core.type import SemanticType
 
 mzML = SemanticType("mzML", variant_of=SampleData.field["type"])
 XCMSExperiment = SemanticType("XCMSExperiment")
+MSP = SemanticType("MSP")
+MatchedSpectra = SemanticType("MatchedSpectra_valid")

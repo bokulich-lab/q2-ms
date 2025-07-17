@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2024, QIIME 2 development team.
+# Copyright (c) 2025, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 import json
 import os
+import re
 import sys
 
 import pandas as pd
@@ -75,7 +76,7 @@ class MSBackendDataFormat(model.TextFileFormat):
         ] != "# MsBackendMzR":
             raise ValidationError(
                 "Header does not match MSBackendDataFormat. It must consist of the "
-                "following two line with at least these columns:\n"
+                "following two lines with at least these columns:\n"
                 "# MsBackendMzR\n" + "\t".join(header_exp) + "\n\nFound instead:\n"
                 f"{header_obs_1[0]}\n" + "\t".join(header_obs_2)
             )
@@ -230,10 +231,10 @@ class XCMSExperimentChromPeaksFormat(model.TextFileFormat):
         ]
         header_obs = pd.read_csv(str(self), sep="\t", nrows=0).columns.tolist()
 
-        if header_exp != header_obs:
+        if not set(header_exp).issubset(set(header_obs)):
             raise ValidationError(
-                "Header does not match XCMSExperimentChromPeaksFormat. It must "
-                "consist of the following columns:\n"
+                "Header does not match XCMSExperimentChromPeaksFormat. It must at "
+                "least consist of the following columns:\n"
                 + ", ".join(header_exp)
                 + "\n\nFound instead:\n"
                 + ", ".join(header_obs)
@@ -339,3 +340,114 @@ class XCMSExperimentDirFmt(model.DirectoryFormat):
         format=XCMSExperimentFeaturePeakIndexFormat,
         optional=True,
     )
+
+
+class MSPFormat(model.TextFileFormat):
+    def _validate(self):
+        """
+        MSP format that adheres to the rules listed in the MsBackendMsp R package.
+        - Comment lines are expected to start with a #.
+        - Multiple spectra within the same MSP file are separated by an empty line.
+        - The first n lines of a spectrum entry represent metadata.
+        - Metadata is provided as “name: value” pairs (i.e. name and value separated
+        by a “:”).
+        - One line per mass peak, with values separated by a whitespace or tabulator.
+        - Each line is expected to contain at least the m/z and intensity values (in
+        that order) of a peak. Additional values are currently ignored.
+        - An MSP file can define/provide data for any number of spectra, with no limit
+        on the number of spectra, number of peaks per spectra or number of metadata
+        lines.
+        """
+        errors = []
+        peak_section = False
+
+        metadata_pattern = re.compile(r"^.*:.*$")  # Faster metadata detection
+        peak_pattern = re.compile(r"^\d+(\.\d+)?[ \t]+\d+(\.\d+)?(?:[ \t]+.*)?$")
+
+        with open(self.path, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f):
+                line = line.strip()
+
+                # Switch to metadata section at empty lines
+                if not line:
+                    peak_section = False
+                    continue
+
+                # Check if the line is a comment
+                if line.startswith("#"):
+                    continue
+
+                # Switch to peak section if pattern matches
+                if not peak_section and peak_pattern.match(line):
+                    peak_section = True
+
+                # Metadata validation (must have "key: value" format)
+                if not peak_section and not metadata_pattern.match(line):
+                    errors.append(
+                        f"Line {i}: Invalid metadata format (should be 'key: value')."
+                        f"\n{line}"
+                    )
+                # Peak data validation (must be m/z and intensity, whitespace or
+                # tab-separated, and allow additional values)
+                if peak_section and len(line.split()) < 2:
+                    errors.append(
+                        f"Line {i}: Peak data must have at least m/z and intensity "
+                        f"values.\n{line}"
+                    )
+
+        if errors:
+            raise ValidationError("\n".join(errors))
+
+    def _validate_(self, level):
+        self._validate()
+
+
+MSPDirFmt = model.SingleFileDirectoryFormat("MSPDirFmt", r".+\.msp$", MSPFormat)
+
+
+class MatchedSpectraFormat(model.TextFileFormat):
+    def _validate(self, lines=None):
+        header_exp = [".original_query_index", "target_spectrum_id", "score"]
+
+        with open(str(self), "r") as f:
+            for i, line in enumerate(f, 1):
+                parts = line.rstrip("\n").split("\t")
+
+                # Header check
+                if i == 1:
+                    if parts != header_exp:
+                        raise ValidationError(
+                            "Header does not match MatchedSpectraFormat. It must "
+                            "at least consist of the following columns:\n"
+                            + ", ".join(header_exp)
+                            + "\n\nFound instead:\n"
+                            + ", ".join(parts)
+                        )
+                    continue
+
+                # Column count check
+                if len(parts) != 3:
+                    raise ValidationError(f"Line {i} does not have 3 columns.")
+
+                # Score value check
+                try:
+                    score = float(parts[2])
+                    if not (0 <= score <= 1):
+                        raise ValidationError(
+                            "The values in the score column have to be between 0 and "
+                            f"1. Line {i} has an out-of-range score: {score}"
+                        )
+                except ValueError:
+                    raise ValidationError(
+                        f"Line {i} has a non-numeric score: {parts[2]}"
+                    )
+                if lines is not None and i - 1 >= lines:
+                    break
+
+    def _validate_(self, level):
+        self._validate({"min": 50, "max": None}[level])
+
+
+MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
+    "MatchedSpectraDirFmt", "matched_spectra.txt", MatchedSpectraFormat
+)

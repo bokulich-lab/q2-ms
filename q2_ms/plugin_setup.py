@@ -11,10 +11,16 @@ from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import (
+    MSP,
+    MatchedSpectra,
+    MatchedSpectraDirFmt,
+    MatchedSpectraFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
     MSExperimentSampleDataLinksSpectra,
+    MSPDirFmt,
+    MSPFormat,
     SpectraSlotsFormat,
     XCMSExperiment,
     XCMSExperimentChromPeakDataFormat,
@@ -27,6 +33,7 @@ from q2_ms.types import (
     mzMLDirFmt,
     mzMLFormat,
 )
+from q2_ms.xcms.database import fetch_massbank
 from q2_ms.xcms.read_ms_experiment import read_ms_experiment
 
 citations = Citations.load("citations.bib", package="q2_ms")
@@ -38,6 +45,22 @@ plugin = Plugin(
     package="q2_ms",
     description="A QIIME 2 plugin for MS data processing.",
     short_description="A QIIME 2 plugin for MS data processing.",
+)
+
+plugin.methods.register_function(
+    function=fetch_massbank,
+    inputs={},
+    outputs=[("massbank", MSP)],
+    parameters={},
+    input_descriptions={},
+    output_descriptions={"massbank": "MassBank spectral library in NIST MSP format."},
+    parameter_descriptions={},
+    name="Fetch MassBank spectral library",
+    description=(
+        "Fetch the latest MassBank spectral library in NIST MSP format. It is "
+        "downloaded from github.com/MassBank/MassBank-data."
+    ),
+    citations=[],
 )
 
 plugin.methods.register_function(
@@ -73,12 +96,19 @@ plugin.methods.register_function(
 plugin.register_semantic_types(
     mzML,
     XCMSExperiment,
+    MSP,
+    MatchedSpectra,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
 plugin.register_semantic_type_to_format(
     XCMSExperiment, artifact_format=XCMSExperimentDirFmt
 )
+plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
+plugin.register_semantic_type_to_format(
+    MatchedSpectra, artifact_format=MatchedSpectraDirFmt
+)
+
 
 plugin.register_formats(
     mzMLFormat,
@@ -94,4 +124,8 @@ plugin.register_formats(
     XCMSExperimentFeatureDefinitionsFormat,
     XCMSExperimentFeaturePeakIndexFormat,
     XCMSExperimentJSONFormat,
+    MSPFormat,
+    MSPDirFmt,
+    MatchedSpectraFormat,
+    MatchedSpectraDirFmt,
 )
