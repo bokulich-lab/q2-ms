@@ -41,6 +41,25 @@ def read_ms_experiment(
 
 
 def _validate_metadata(metadata, spectra_path):
+    """
+    Validates that sample IDs in the metadata match the filenames in the spectra
+    directory.
+
+    This function compares the sample IDs from the metadata with the filenames
+    of files in the given spectra directory. It checks for any discrepancies
+    between the two sets of sample IDs and raises a ValueError if mismatches are found.
+
+    Parameters:
+        metadata (pd.DataFrame):
+            Metadata DataFrame whose index represents sample IDs.
+        spectra_path (str):
+            Path to the directory containing spectra files.
+
+    Raises:
+        ValueError:
+            If there are sample IDs present in one input (metadata or spectra)
+            but missing in the other.
+    """
     metadata_set = set(metadata.index.astype(str))
 
     spectra_set = {
