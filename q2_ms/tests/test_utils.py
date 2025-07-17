@@ -5,7 +5,6 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-import importlib
 import subprocess
 import unittest
 from unittest.mock import call, patch
@@ -60,19 +59,14 @@ class TestRunCommand(TestPluginBase):
     def test_run_r_script_success(self, mock_subprocess):
         # Call function
         run_r_script(
-            params={"param1": "value1", "param2": 42},
+            params={"param1": "value1", "param2": 42, "param3": None},
             script_name="test_script",
             package_name="q2_ms",
         )
 
         # Check if subprocess.run was called correctly
-        expected_script_path = str(
-            importlib.resources.files("q2_ms") / "assets/test_script.R"
-        )
         expected_cmd = [
-            "/usr/local/bin/Rscript",
-            "--vanilla",
-            expected_script_path,
+            "test_script.R",
             "--param1",
             "value1",
             "--param2",

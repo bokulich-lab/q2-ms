@@ -44,7 +44,6 @@ class TestReadMsExperiment(TestPluginBase):
             sep="\t",
             index_col=0,
         )
-        sample_data_exp.drop(columns=["spectraOrigin"], inplace=True)
         sample_data_obs.drop(columns=["spectraOrigin"], inplace=True)
 
         pd.testing.assert_frame_equal(sample_data_exp, sample_data_obs)
@@ -63,7 +62,6 @@ class TestReadMsExperiment(TestPluginBase):
             sep="\t",
             index_col=0,
         )
-        sample_data_exp.drop(columns=["spectraOrigin"], inplace=True)
         sample_data_obs.drop(columns=["spectraOrigin"], inplace=True)
 
         pd.testing.assert_frame_equal(sample_data_exp, sample_data_obs)
