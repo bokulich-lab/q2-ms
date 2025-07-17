@@ -27,10 +27,9 @@ def read_ms_experiment(
             sample_metadata_table = sample_metadata.to_dataframe()
             _validate_metadata(sample_metadata_table, str(spectra))
 
-            # Save sample metadata to tsv
+            # Save sample metadata to tsv and add to params
             tsv_path = os.path.join(tmp_dir, "sample_metadata.tsv")
             sample_metadata_table.to_csv(tsv_path, sep="\t")
-
             params["sample_metadata"] = tsv_path
 
             # Run R script
