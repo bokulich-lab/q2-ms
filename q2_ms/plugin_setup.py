@@ -51,10 +51,10 @@ plugin.methods.register_function(
     },
     parameter_descriptions={
         "sample_metadata": (
-            "Optional sample metadata. This can be used for example for feature "
-            "filtering with 'filter-features' and subset-based alignment with "
-            "'adjust-retention-time-obiwarp'. Samples should be ordered by injection "
-            "index for subset-based alignment. "
+            "Optional sample metadata. This can be used in downstream analyses for "
+            "example for feature filtering with 'filter-features' and subset-based "
+            "alignment with 'adjust-retention-time-obiwarp'. Samples should be ordered "
+            "by injection index for subset-based alignment. "
         ),
     },
     name="Read spectra into XCMS experiment",

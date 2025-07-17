@@ -16,16 +16,15 @@ option_list <- list(
 optParser <- OptionParser(option_list = option_list)
 opt <- parse_args(optParser)
 
+# Get paths to spectra files from directory
+spectraFiles <- list.files(opt$spectra, full.names = TRUE)
+
 # Read in MsExperiment with or without sampleData
 if (is.null(opt$sample_metadata)) {
-  # Get paths to spectra files from directory
-  spectraFiles <- list.files(opt$spectra, full.names = TRUE)
   MsExperiment <- readMsExperiment(spectraFiles = spectraFiles)
 
 } else {
-  # Get paths to spectra files from sample data
   sampleData <- read.table(file = opt$sample_metadata, header = TRUE, sep = "\t")
-  spectraFiles <- file.path(opt$spectra, paste0(sampleData[[1]], ".mzML"))
   MsExperiment <- readMsExperiment(spectraFiles = spectraFiles, sampleData = sampleData)
 }
 
