@@ -1,11 +1,10 @@
-#!/usr/bin/env Rscript --vanilla
+#!/usr/bin/env Rscript
 
 library(xcms)
 library(Spectra)
 library(MsExperiment)
 library(MsIO)
 library(optparse)
-library(MSnbase)
 
 # Define command-line options
 option_list <- list(
@@ -37,9 +36,9 @@ opt <- parse_args(optParser)
 
 # Load the XCMSExperiment or MsExperiment
 XCMSExperiment <- tryCatch({
-    readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$spectra)
-}, error = function(e) {
     readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$spectra)
+}, error = function(e) {
+    readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$spectra)
 })
 
 # Create paramter object for CentWave
