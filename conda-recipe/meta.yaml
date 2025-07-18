@@ -20,11 +20,16 @@ requirements:
     - versioningit
 
   run:
+    - bioconductor-msexperiment
+    - bioconductor-spectra
+    - bioconductor-xcms
     - pymzml
     - qiime2 >={{ qiime2 }}
     - q2-types >={{ q2_types }}
     - q2templates >={{ q2templates }}
-
+    - r-base
+    - r-msio
+    - r-optparse
 test:
   requires:
     - parameterized
