@@ -28,8 +28,8 @@ def read_ms_experiment(
     # Add output path to params
     params["output_path"] = str(xcms_experiment)
 
-    if sample_metadata is not None:
-        with tempfile.TemporaryDirectory() as tmp_dir:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        if sample_metadata is not None:
             # Validate sample metadata IDs
             sample_metadata_table = sample_metadata.to_dataframe()
             _validate_metadata(sample_metadata_table, str(spectra))
@@ -39,9 +39,7 @@ def read_ms_experiment(
             sample_metadata_table.to_csv(tsv_path, sep="\t")
             params["sample_metadata"] = tsv_path
 
-            # Run R script
-            run_r_script(params, "read_ms_experiment", "XCMS")
-    else:
+        # Run R script
         run_r_script(params, "read_ms_experiment", "XCMS")
 
     return xcms_experiment
