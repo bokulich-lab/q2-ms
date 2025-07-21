@@ -40,7 +40,7 @@ def read_ms_experiment(
             params["sample_metadata"] = tsv_path
 
         # Run R script
-        run_r_script(params, "read_ms_experiment", "XCMS")
+        run_r_script("read_ms_experiment", params, "XCMS")
 
     return xcms_experiment
 

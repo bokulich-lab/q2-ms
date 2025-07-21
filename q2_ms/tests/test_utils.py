@@ -80,6 +80,6 @@ class TestRunCommand(TestPluginBase):
     @patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "cmd"))
     def test_run_r_script_failure(self, mock_subprocess):
         with self.assertRaises(Exception) as context:
-            run_r_script({}, "", "q2_ms")
+            run_r_script("", {}, "q2_ms")
 
         self.assertIn("q2_ms", str(context.exception))
