@@ -24,9 +24,9 @@ def create_fake_spectra_files(xcms_experiment_path, tmp_dir):
     sample_data_path = os.path.join(
         xcms_experiment_path, "ms_experiment_sample_data.txt"
     )
-    file_paths = pd.read_csv(
-        sample_data_path, sep="\t", index_col=0, usecols=["spectraOrigin"]
-    ).squeeze()
+    file_paths = pd.read_csv(sample_data_path, sep="\t", usecols=["spectraOrigin"])[
+        "spectraOrigin"
+    ].tolist()
     for path in file_paths:
         with open(os.path.join(tmp_dir, os.path.basename(path)), "w"):
             pass
