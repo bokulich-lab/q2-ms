@@ -22,9 +22,9 @@ output_paths <- fromJSON(opt$output_paths)
 
 # Load the XCMSExperiment or MsExperiment
 XCMSExperiment <- tryCatch({
-    readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$fake_spectra)
-}, error = function(e) {
     readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$fake_spectra)
+}, error = function(e) {
+    readMsObject(MsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$fake_spectra)
 })
 
 # Loop over partitions
