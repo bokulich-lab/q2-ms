@@ -6,8 +6,6 @@ library(Spectra)
 library(MsExperiment)
 library(MsIO)
 library(optparse)
-library(mzR)
-
 
 option_list <- list(
   make_option("--xcms_experiment", type = "character"),
@@ -28,12 +26,7 @@ XCMSExperiment <- tryCatch({
 }, error = function(e) {
     readMsObject(XcmsExperiment(), PlainTextParam(opt$xcms_experiment), spectraPath=opt$fake_spectra)
 })
-print("blub")
-print(sampleData(XCMSExperiment))
-print("blub2")
-print(seq_along(partition_indices))
-print("blub3")
-print(partition_indices)
+
 # Loop over partitions
 for (i in seq_along(partition_indices)) {
   idx <- as.integer(partition_indices[[i]]) + 1  # R is 1-based

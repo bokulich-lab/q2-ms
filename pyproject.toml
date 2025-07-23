@@ -43,7 +43,8 @@ file = "q2_ms/_version.py"
 include-package-data = true
 script-files = [
     "q2_ms/assets/read_ms_experiment.R",
-    "q2_ms/assets/partition_xcms_experiment.R"
+    "q2_ms/assets/partition_xcms_experiment.R",
+    "q2_ms/assets/collate_xcms_experiments.R"
 ]
 
 [tool.setuptools.packages.find]
