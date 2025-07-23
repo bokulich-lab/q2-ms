@@ -41,6 +41,9 @@ file = "q2_ms/_version.py"
 
 [tool.setuptools]
 include-package-data = true
+script-files = [
+    "q2_ms/assets/read_ms_experiment.R"
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

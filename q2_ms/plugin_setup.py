@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
-from qiime2.plugin import Citations, Plugin
+from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import (
@@ -33,6 +33,7 @@ from q2_ms.types import (
     mzMLFormat,
 )
 from q2_ms.xcms.database import fetch_massbank
+from q2_ms.xcms.read_ms_experiment import read_ms_experiment
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -59,6 +60,35 @@ plugin.methods.register_function(
         "downloaded from github.com/MassBank/MassBank-data."
     ),
     citations=[],
+)
+
+plugin.methods.register_function(
+    function=read_ms_experiment,
+    inputs={"spectra": SampleData[mzML]},
+    outputs=[("xcms_experiment", XCMSExperiment)],
+    parameters={"sample_metadata": Metadata},
+    input_descriptions={"spectra": "Spectra data as mzML files."},
+    output_descriptions={
+        "xcms_experiment": "XCMSExperiment object exported to plain text."
+    },
+    parameter_descriptions={
+        "sample_metadata": (
+            "Optional sample metadata. This can be used in downstream analyses for "
+            "example for feature filtering with 'filter-features' and subset-based "
+            "alignment with 'adjust-retention-time-obiwarp'. Samples should be ordered "
+            "by injection index for subset-based alignment. "
+        ),
+    },
+    name="Read spectra into XCMS experiment",
+    description=(
+        "This function uses the XCMS package to read in MS data from mzML files into "
+        "an XcmsExperiment object and export it as plain text files."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
 )
 
 # Registrations

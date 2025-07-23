@@ -1,0 +1,5 @@
+"sampleid"	"samplegroup"	"sampletype"
+"1"	"ko15"	"KO"	"QC"
+"2"	"ko16"	"KO"	"study"
+"3"	"wt21"	"WT"	"QC"
+"4"	"wt22"	"WT"	"study"
