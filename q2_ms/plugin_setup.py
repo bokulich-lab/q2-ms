@@ -94,6 +94,35 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
+    function=read_ms_experiment,
+    inputs={"spectra": SampleData[mzML]},
+    outputs=[("xcms_experiment", XCMSExperiment)],
+    parameters={"sample_metadata": Metadata},
+    input_descriptions={"spectra": "Spectra data as mzML files."},
+    output_descriptions={
+        "xcms_experiment": "XCMSExperiment object exported to plain text."
+    },
+    parameter_descriptions={
+        "sample_metadata": (
+            "Optional sample metadata. This can be used in downstream analyses for "
+            "example for feature filtering with 'filter-features' and subset-based "
+            "alignment with 'adjust-retention-time-obiwarp'. Samples should be ordered "
+            "by injection index for subset-based alignment. "
+        ),
+    },
+    name="Read spectra into XCMS experiment",
+    description=(
+        "This function uses the XCMS package to read in MS data from mzML files into "
+        "an XcmsExperiment object and export it as plain text files."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
+)
+
+plugin.methods.register_function(
     function=partition_xcms_experiment,
     inputs={"xcms_experiment": XCMSExperiment},
     parameters={"num_partitions": Int % Range(1, None)},
