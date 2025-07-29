@@ -1,0 +1,2 @@
+"sample_name"	"sample_group"	"spectraOrigin"
+"1"	"ko15"	"KO"	"/path/ko15.mzML"
