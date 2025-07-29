@@ -94,7 +94,7 @@ class TestCollate(TestPluginBase):
 
     def test_verify_and_copy_file_raises_value_error_on_mismatch(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(ValueError, r"in file: .*file\.txt"):
+            with self.assertRaisesRegex(ValueError, r".*file\.txt:.*file\.txt"):
                 _verify_and_copy_file(
                     [
                         self.get_data_path("verify_and_copy_file/dir1"),

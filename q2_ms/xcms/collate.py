@@ -32,7 +32,10 @@ def _verify_and_copy_file(xcms_experiments, file_name, output_path):
     reference = contents[0]
     for _id, content in enumerate(contents[1:], start=1):
         if content != reference:
-            raise ValueError(f"Mismatch found in file: {file_paths[_id]}")
+            raise ValueError(
+                f"Mismatching content found in {file_name}: {file_paths[_id]}\n"
+                f"Only artifacts with identical content in {file_name} can be collated."
+            )
 
     # All files are identical; copy the first one to output_path
     shutil.copyfile(file_paths[0], os.path.join(output_path, file_name))
