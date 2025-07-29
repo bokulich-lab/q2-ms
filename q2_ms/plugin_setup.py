@@ -7,11 +7,14 @@
 # ----------------------------------------------------------------------------
 from q2_types.metadata import ImmutableMetadata
 from q2_types.sample_data import SampleData
-from qiime2.plugin import Citations, Plugin
+from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import (
     MSP,
+    MatchedSpectra,
+    MatchedSpectraDirFmt,
+    MatchedSpectraFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -32,6 +35,7 @@ from q2_ms.types import (
 )
 from q2_ms.xcms.database import fetch_massbank
 from q2_ms.xcms.metadata import create_spectral_metadata
+from q2_ms.xcms.read_ms_experiment import read_ms_experiment
 
 citations = Citations.load("citations.bib", package="q2_ms")
 
@@ -80,11 +84,41 @@ plugin.methods.register_function(
     citations=[],
 )
 
+plugin.methods.register_function(
+    function=read_ms_experiment,
+    inputs={"spectra": SampleData[mzML]},
+    outputs=[("xcms_experiment", XCMSExperiment)],
+    parameters={"sample_metadata": Metadata},
+    input_descriptions={"spectra": "Spectra data as mzML files."},
+    output_descriptions={
+        "xcms_experiment": "XCMSExperiment object exported to plain text."
+    },
+    parameter_descriptions={
+        "sample_metadata": (
+            "Optional sample metadata. This can be used in downstream analyses for "
+            "example for feature filtering with 'filter-features' and subset-based "
+            "alignment with 'adjust-retention-time-obiwarp'. Samples should be ordered "
+            "by injection index for subset-based alignment. "
+        ),
+    },
+    name="Read spectra into XCMS experiment",
+    description=(
+        "This function uses the XCMS package to read in MS data from mzML files into "
+        "an XcmsExperiment object and export it as plain text files."
+    ),
+    citations=[
+        citations["kosters2018pymzml"],
+        citations["smith2006xcms"],
+        citations["msexperiment2024"],
+    ],
+)
+
 # Registrations
 plugin.register_semantic_types(
     mzML,
     XCMSExperiment,
     MSP,
+    MatchedSpectra,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
@@ -92,6 +126,10 @@ plugin.register_semantic_type_to_format(
     XCMSExperiment, artifact_format=XCMSExperimentDirFmt
 )
 plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
+plugin.register_semantic_type_to_format(
+    MatchedSpectra, artifact_format=MatchedSpectraDirFmt
+)
+
 
 plugin.register_formats(
     mzMLFormat,
@@ -109,4 +147,6 @@ plugin.register_formats(
     XCMSExperimentJSONFormat,
     MSPFormat,
     MSPDirFmt,
+    MatchedSpectraFormat,
+    MatchedSpectraDirFmt,
 )
