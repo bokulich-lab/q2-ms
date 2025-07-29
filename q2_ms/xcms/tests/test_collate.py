@@ -13,6 +13,7 @@ from qiime2.plugin.testing import TestPluginBase
 
 from q2_ms.types import XCMSExperimentDirFmt
 from q2_ms.xcms.collate import (
+    _check_headers,
     _read_table_and_index,
     _verify_and_copy_file,
     _write_with_preserved_header,
@@ -160,3 +161,21 @@ class TestCollate(TestPluginBase):
 
         self.assertEqual(header, '## header\n"mz"\t"mzmin"\t"mzmax"\n')
         self.assertListEqual(list(df.index), ['"CP8"', '"CP9"'])
+
+    def test_check_headers_passes(self):
+        df1 = pd.DataFrame(columns=["A", "B", "C"])
+        df2 = pd.DataFrame(columns=["A", "B", "C"])
+        df3 = pd.DataFrame(columns=["A", "B", "C"])
+        _check_headers([df1, df2, df3], "test_file.csv")
+
+    def test_check_headers_raises_with_message(self):
+        df1 = pd.DataFrame(columns=["A", "B", "C"])
+        df2 = pd.DataFrame(columns=["A", "X", "C"])
+        df3 = pd.DataFrame(columns=["A", "B", "C"])
+        expected_regex = (
+            r"There is a column mismatch in one of the files called: file\.txt\n"
+            r"Columns of DataFrame at index 0:\nA,B,C\n"
+            r"Columns of DataFrame at index 1:\nA,X,C"
+        )
+        with self.assertRaisesRegex(ValueError, expected_regex):
+            _check_headers([df1, df2, df3], "file.txt")
