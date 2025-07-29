@@ -12,7 +12,7 @@ import pandas as pd
 
 def create_fake_spectra_files(xcms_experiment_path, tmp_dir):
     """
-    Create empty spectra files filenames in a temp directory that are present in the
+    Create empty spectra files in a temp directory that are present in the
     'ms_experiment_sample_data.txt' file of an xcms experiment. This is
     needed to import an xcms experiment object without providing the original mzML
     files.
