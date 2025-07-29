@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
+from qiime2.core.type import List
 from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
@@ -32,6 +33,7 @@ from q2_ms.types import (
     mzMLDirFmt,
     mzMLFormat,
 )
+from q2_ms.xcms.collate import collate_xcms_experiments
 from q2_ms.xcms.database import fetch_massbank
 from q2_ms.xcms.read_ms_experiment import read_ms_experiment
 
@@ -91,6 +93,18 @@ plugin.methods.register_function(
     ],
 )
 
+plugin.methods.register_function(
+    function=collate_xcms_experiments,
+    inputs={"xcms_experiments": List[XCMSExperiment]},
+    parameters={},
+    outputs={"collated_xcms_experiment": XCMSExperiment},
+    input_descriptions={"xcms_experiments": "XCMSExperiment artifacts to collate"},
+    parameter_descriptions={},
+    name="Collate XCMSExperiment artifacts",
+    description="Takes a collection XCMSExperiment artifacts and collates them into a "
+    "single artifact. The artifacts have to contain chromatographic peak "
+    "information and have to have the same process history.",
+)
 # Registrations
 plugin.register_semantic_types(
     mzML,
