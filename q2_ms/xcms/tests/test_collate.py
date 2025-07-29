@@ -37,44 +37,14 @@ class TestCollate(TestPluginBase):
     def test_collate_xcms_experiments(self):
         obs = collate_xcms_experiments([self.ko15, self.ko16, self.wt21, self.wt22])
         exp_path = self.get_data_path("xcms_experiment_peaks")
-
-        for file_name in os.listdir(exp_path):
-            if not file_name == "ms_backend_data.txt":
-                path1 = os.path.join(str(obs), file_name)
-                path2 = os.path.join(exp_path, file_name)
-
-                if os.path.isfile(path1) and os.path.isfile(path2):
-                    with open(path1, "rb") as f1, open(path2, "rb") as f2:
-                        content1 = f1.read()
-                        content2 = f2.read()
-                        self.assertEqual(
-                            content1,
-                            content2,
-                            msg=f"Files differ: {file_name}\n{path1}\n{path2}",
-                        )
-
-        # Check ms_backend_data.txt file, dataOrigin and dataStorage columns have to be
-        # dropped because paths change for every test run.
-        ms_backend_obs = pd.read_csv(
-            os.path.join(obs.path, "ms_backend_data.txt"),
-            sep="\t",
-            index_col=0,
-            skiprows=1,
-        )
-        ms_backend_exp = pd.read_csv(
-            os.path.join(obs.path, "ms_backend_data.txt"),
-            sep="\t",
-            index_col=0,
-            skiprows=1,
-        )
-        ms_backend_obs.drop(["dataOrigin", "dataStorage"], axis=1, inplace=True)
-        ms_backend_exp.drop(["dataOrigin", "dataStorage"], axis=1, inplace=True)
-        self.assertTrue(ms_backend_obs.equals(ms_backend_exp))
+        self._test_collate_xcms_experiments_helper(obs, exp_path)
 
     def test_collate_xcms_experiments_empty_peaks(self):
         obs = collate_xcms_experiments([self.ko15_empty_peaks, self.ko16])
         exp_path = self.get_data_path("xcms_experiment_empty_peaks")
+        self._test_collate_xcms_experiments_helper(obs, exp_path)
 
+    def _test_collate_xcms_experiments_helper(self, obs, exp_path):
         for file_name in os.listdir(exp_path):
             if not file_name == "ms_backend_data.txt":
                 path1 = os.path.join(str(obs), file_name)
