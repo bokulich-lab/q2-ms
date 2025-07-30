@@ -12,7 +12,11 @@ import qiime2
 from qiime2.plugin.testing import TestPluginBase
 
 from q2_ms.types import mzMLDirFmt
-from q2_ms.xcms.read_ms_experiment import _validate_metadata, read_ms_experiment
+from q2_ms.xcms.read_ms_experiment import (
+    _get_type,
+    _validate_metadata,
+    read_ms_experiment,
+)
 
 
 class TestReadMsExperiment(TestPluginBase):
@@ -76,3 +80,11 @@ class TestReadMsExperiment(TestPluginBase):
         metadata_added.loc["wt23"] = ["WT", "study"]
         with self.assertRaisesRegex(ValueError, "missing in spectra: {'wt23'}"):
             _validate_metadata(metadata_added, str(self.spectra))
+
+    def test_get_type_ms2(self):
+        type = _get_type(self.get_data_path("get_type/ms2"))
+        self.assertEqual(type, 'XCMSExperiment % Properties("MS2")')
+
+    def test_get_type_ms1(self):
+        type = _get_type(self.get_data_path("get_type/ms1"))
+        self.assertEqual(type, "XCMSExperiment")
