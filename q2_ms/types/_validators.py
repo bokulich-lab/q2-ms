@@ -26,6 +26,7 @@ def validate_xcms_experiment_ms2(data: XCMSExperimentDirFmt, level):
         sep="\t",
         usecols=["msLevel"],
         skiprows=1,
+        index_col=0,
     )
     if not (df["msLevel"] == 2).any():
         raise ValidationError(
