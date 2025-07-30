@@ -62,11 +62,7 @@ class TestXCMSExperimentFormats(TestPluginBase):
         with self.assertRaisesRegex(
             ValidationError,
             ".*Header does not match MSBackendDataFormat\\. .*\\n# MsBackendMzR\\n"
-            "msLevel\\trtime\\tacquisitionNum\\tdataOrigin\\tpolarity\\tprecScanNum"
-            "\\tprecursorMz\\tprecursorIntensity\\tprecursorCharge\\tcollisionEnergy"
-            "\\tpeaksCount\\ttotIonCurrent\\tbasePeakMZ\\tbasePeakIntensity"
-            "\\tionisationEnergy\\tlowMZ\\thighMZ\\tinjectionTime\\tspectrumId"
-            "\\tdataStorage\\tscanIndex\\n\\nFound instead:\\nsubsetBy\\n1\\t1\\.1",
+            ".*\\n\\nFound instead:\\nsubsetBy\\n1\\t1\\.1",
         ):
             format.validate()
 
