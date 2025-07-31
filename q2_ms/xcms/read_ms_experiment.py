@@ -5,13 +5,12 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-import copy
 import os
 import tempfile
 
 import pandas as pd
 
-from q2_ms.types import XCMSExperimentDirFmt
+from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
 from q2_ms.utils import run_r_script
 
 
@@ -20,14 +19,9 @@ def read_ms_experiment(
     spectra,
     sample_metadata=None,
 ):
-    # Create parameters dict
-    params = copy.copy(locals())
-
-    # Init XCMSExperimentDirFmt
     xcms_experiment_dir_fmt = XCMSExperimentDirFmt()
-
-    # Add output path to params
-    params["output_path"] = str(xcms_experiment_dir_fmt)
+    spectra = spectra.view(mzMLDirFmt)
+    params = {"spectra": str(spectra), "output_path": str(xcms_experiment_dir_fmt)}
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         if sample_metadata is not None:
@@ -48,7 +42,7 @@ def read_ms_experiment(
         _get_type(str(xcms_experiment_dir_fmt)), xcms_experiment_dir_fmt
     )
 
-    return xcms_experiment_dir_fmt
+    return xcms_experiment
 
 
 def _get_type(directory: str) -> str:
