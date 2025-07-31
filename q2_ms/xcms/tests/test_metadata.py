@@ -23,6 +23,15 @@ class TestMetadata(TestPluginBase):
         obs = create_spectral_metadata(xcms_experiment)
         self._test_create_spectral_metadata_helper(obs, "spectral_metadata_ms1.tsv")
 
+    def test_create_spectral_metadata_no_centroided_rt_adjusted(self):
+        xcms_experiment = XCMSExperimentDirFmt(
+            self.get_data_path("metadata_no_centroided_rt"), "r"
+        )
+        obs = create_spectral_metadata(xcms_experiment)
+        self._test_create_spectral_metadata_helper(
+            obs, "spectral_metadata_ms1_no_centroided_rt_adjusted.tsv"
+        )
+
     def test_create_spectral_metadata_ms2(self):
         xcms_experiment = XCMSExperimentDirFmt(self.get_data_path("metadata"), "r")
         obs = create_spectral_metadata(xcms_experiment, "2")
@@ -48,6 +57,7 @@ class TestMetadata(TestPluginBase):
             "sample_id",
         ]
         exp[columns_to_convert] = exp[columns_to_convert].astype("float64")
-        exp["centroided"] = exp["centroided"].astype("str")
+        if "centroided" in exp.columns:
+            exp["centroided"] = exp["centroided"].astype("str")
 
         assert_frame_equal(obs.to_dataframe(), exp)
