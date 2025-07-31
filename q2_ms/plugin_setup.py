@@ -5,6 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import importlib
+
 from q2_types.metadata import ImmutableMetadata
 from q2_types.sample_data import SampleData
 from qiime2.plugin import Citations, Metadata, Plugin
@@ -150,3 +152,5 @@ plugin.register_formats(
     MatchedSpectraFormat,
     MatchedSpectraDirFmt,
 )
+
+importlib.import_module("q2_ms.types._validators")
