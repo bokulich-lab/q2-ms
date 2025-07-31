@@ -14,7 +14,9 @@ from qiime2.metadata.base import is_id_header
 from q2_ms.types import XCMSExperimentDirFmt
 
 
-def create_spectral_metadata(xcms_experiment: XCMSExperimentDirFmt) -> qiime2.Metadata:
+def create_spectral_metadata(
+    xcms_experiment: XCMSExperimentDirFmt, ms_level: str = "1"
+) -> qiime2.Metadata:
     # Read the backend data file while skipping the first line
     backend_df = pd.read_csv(
         os.path.join(str(xcms_experiment), "ms_backend_data.txt"),
@@ -59,25 +61,28 @@ def create_spectral_metadata(xcms_experiment: XCMSExperimentDirFmt) -> qiime2.Me
     if "centroided" in merged_df.columns:
         merged_df["centroided"] = merged_df["centroided"].astype(str)
 
-    # Filter data by MS level
-    merged_df = merged_df.loc[merged_df["msLevel"] == 1]
-
     # Adds "_" to column name if it is a reserved metadata index name
     merged_df.columns = [
         col + "_" if is_id_header(col) else col for col in merged_df.columns
     ]
 
-    # Drop columns that only contain information about MS2 scans
-    columns_to_drop = [
-        "precScanNum",
-        "precursorMz",
-        "precursorIntensity",
-        "precursorCharge",
-        "collisionEnergy",
-        "isolationWindowLowerMz",
-        "isolationWindowTargetMz",
-        "isolationWindowUpperMz",
-    ]
-    merged_df.drop(columns=[col for col in columns_to_drop if col in merged_df.columns])
+    # Filter data by MS level
+    merged_df = merged_df.loc[merged_df["msLevel"] == int(ms_level)]
+
+    if ms_level == "1":
+        # Drop columns that only contain information about MS2 scans
+        columns_to_drop = [
+            "precScanNum",
+            "precursorMz",
+            "precursorIntensity",
+            "precursorCharge",
+            "collisionEnergy",
+            "isolationWindowLowerMz",
+            "isolationWindowTargetMz",
+            "isolationWindowUpperMz",
+        ]
+        merged_df.drop(
+            columns=[col for col in columns_to_drop if col in merged_df.columns]
+        )
 
     return qiime2.Metadata(merged_df)

@@ -9,6 +9,7 @@ import importlib
 
 from q2_types.metadata import ImmutableMetadata
 from q2_types.sample_data import SampleData
+from qiime2.core.type import Choices, Properties, Str, TypeMap
 from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
@@ -66,14 +67,46 @@ plugin.methods.register_function(
     citations=[],
 )
 
+P_ms_level, I_xcms_experiment, _ = TypeMap(
+    {
+        (Str % Choices(["1"]), XCMSExperiment): ImmutableMetadata,
+        (Str % Choices(["1"]), XCMSExperiment % Properties("peaks")): ImmutableMetadata,
+        (
+            Str % Choices(["1"]),
+            XCMSExperiment % Properties("features"),
+        ): ImmutableMetadata,
+        (Str % Choices(["1"]), XCMSExperiment % Properties("MS2")): ImmutableMetadata,
+        (
+            Str % Choices(["1"]),
+            XCMSExperiment % Properties("MS2", "peaks"),
+        ): ImmutableMetadata,
+        (
+            Str % Choices(["1"]),
+            XCMSExperiment % Properties("MS2", "features"),
+        ): ImmutableMetadata,
+        (Str % Choices(["2"]), XCMSExperiment % Properties("MS2")): ImmutableMetadata,
+        (
+            Str % Choices(["2"]),
+            XCMSExperiment % Properties("MS2", "peaks"),
+        ): ImmutableMetadata,
+        (
+            Str % Choices(["2"]),
+            XCMSExperiment % Properties("MS2", "features"),
+        ): ImmutableMetadata,
+    }
+)
+
+
 plugin.methods.register_function(
     function=create_spectral_metadata,
-    inputs={"xcms_experiment": XCMSExperiment},
+    inputs={"xcms_experiment": I_xcms_experiment},
     outputs=[("spectral_metadata", ImmutableMetadata)],
-    parameters={},
+    parameters={"ms_level": P_ms_level},
     input_descriptions={"xcms_experiment": "XCMSExperiment."},
     output_descriptions={"spectral_metadata": "Spectral metadata of all MS1 scans."},
-    parameter_descriptions={},
+    parameter_descriptions={
+        "ms_level": "If the spectral metadata should be created for MS1 or MS2 scans."
+    },
     name="Create spectral metadata",
     description=(
         "This action creates a spectral metadata table from a XCMSExperiment artifact. "

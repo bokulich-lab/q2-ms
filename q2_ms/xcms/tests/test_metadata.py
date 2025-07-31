@@ -5,6 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import os
+
 import pandas as pd
 from pandas._testing import assert_frame_equal
 from qiime2.plugin.testing import TestPluginBase
@@ -19,8 +21,16 @@ class TestMetadata(TestPluginBase):
     def test_create_spectral_metadata(self):
         xcms_experiment = XCMSExperimentDirFmt(self.get_data_path("metadata"), "r")
         obs = create_spectral_metadata(xcms_experiment)
+        self._test_create_spectral_metadata_helper(obs, "spectral_metadata_ms1.tsv")
+
+    def test_create_spectral_metadata_ms2(self):
+        xcms_experiment = XCMSExperimentDirFmt(self.get_data_path("metadata"), "r")
+        obs = create_spectral_metadata(xcms_experiment, "2")
+        self._test_create_spectral_metadata_helper(obs, "spectral_metadata_ms2.tsv")
+
+    def _test_create_spectral_metadata_helper(self, obs, exp_metadata):
         exp = pd.read_csv(
-            self.get_data_path("metadata_expected/spectral_metadata.tsv"),
+            self.get_data_path(os.path.join("metadata_expected", exp_metadata)),
             sep="\t",
             index_col=0,
         )
