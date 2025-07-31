@@ -1,0 +1,4 @@
+# MsBackendMzR
+"msLevel"	"rtime"	"acquisitionNum"
+"1"	1	2501.378	1
+"2"	1	2502.943	2

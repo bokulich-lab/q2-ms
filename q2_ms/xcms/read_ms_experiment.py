@@ -5,28 +5,23 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-import copy
 import os
 import tempfile
 
-from qiime2 import Metadata
+import pandas as pd
 
 from q2_ms.types import XCMSExperimentDirFmt, mzMLDirFmt
 from q2_ms.utils import run_r_script
 
 
 def read_ms_experiment(
-    spectra: mzMLDirFmt,
-    sample_metadata: Metadata = None,
-) -> XCMSExperimentDirFmt:
-    # Create parameters dict
-    params = copy.copy(locals())
-
-    # Init XCMSExperimentDirFmt
-    xcms_experiment = XCMSExperimentDirFmt()
-
-    # Add output path to params
-    params["output_path"] = str(xcms_experiment)
+    ctx,
+    spectra,
+    sample_metadata=None,
+):
+    xcms_experiment_dir_fmt = XCMSExperimentDirFmt()
+    spectra = spectra.view(mzMLDirFmt)
+    params = {"spectra": str(spectra), "output_path": str(xcms_experiment_dir_fmt)}
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         if sample_metadata is not None:
@@ -42,7 +37,35 @@ def read_ms_experiment(
         # Run R script
         run_r_script("read_ms_experiment", params, "XCMS")
 
+    # Create artifact with correct type
+    xcms_experiment = ctx.make_artifact(
+        _get_type(str(xcms_experiment_dir_fmt)), xcms_experiment_dir_fmt
+    )
+
     return xcms_experiment
+
+
+def _get_type(directory: str) -> str:
+    """
+    Determines the semantic type of an XCMSExperiment based on MS level data.
+
+    Parameters:
+        directory (str): Path to the XCMSExperiment directory.
+
+    Returns:
+        str: The semantic type, either 'XCMSExperiment' or
+             'XCMSExperiment % Properties("MS2")'.
+    """
+    df = pd.read_csv(
+        os.path.join(directory, "ms_backend_data.txt"),
+        sep="\t",
+        usecols=["msLevel"],
+        skiprows=1,
+        index_col=0,
+    )
+    if (df["msLevel"] == 2).any():
+        return 'XCMSExperiment % Properties("MS2")'
+    return "XCMSExperiment"
 
 
 def _validate_metadata(metadata, spectra_path):
