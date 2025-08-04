@@ -39,6 +39,6 @@ def find_peaks_centwave(
     params = copy.copy(locals())
 
     # Run R script
-    run_r_script(params, "find_peaks_centwave", "XCMS")
+    run_r_script("find_peaks_centwave", params, "XCMS")
 
     return xcms_experiment_peaks
