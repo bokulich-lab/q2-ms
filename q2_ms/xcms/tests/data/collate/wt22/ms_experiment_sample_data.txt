@@ -1,0 +1,2 @@
+"sample_name"	"sample_group"	"sample_type"	"spectraOrigin"
+"1"	"wt22"	"WT"	"study"	"/Users/rischv/Documents/repo/q2-ms/q2_ms/xcms/tests/data/faahKO/wt22.mzML"

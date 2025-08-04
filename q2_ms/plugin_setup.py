@@ -14,6 +14,7 @@ from qiime2.core.type import (
     Collection,
     Float,
     Int,
+    List,
     Properties,
     Range,
     Str,
@@ -45,6 +46,7 @@ from q2_ms.types import (
     mzMLDirFmt,
     mzMLFormat,
 )
+from q2_ms.xcms.collate import collate_xcms_experiments
 from q2_ms.xcms.database import fetch_massbank
 from q2_ms.xcms.find_peaks_centwave import find_peaks_centwave
 from q2_ms.xcms.partition import partition_xcms_experiment
@@ -290,6 +292,18 @@ plugin.methods.register_function(
     "artifacts containing subsets of the samples.",
 )
 
+plugin.methods.register_function(
+    function=collate_xcms_experiments,
+    inputs={"xcms_experiments": List[XCMSExperiment]},
+    parameters={},
+    outputs={"collated_xcms_experiment": XCMSExperiment},
+    input_descriptions={"xcms_experiments": "XCMSExperiment artifacts to collate"},
+    parameter_descriptions={},
+    name="Collate XCMSExperiment artifacts",
+    description="Takes a collection XCMSExperiment artifacts and collates them into a "
+    "single artifact. The artifacts have to contain chromatographic peak "
+    "information and have to have the same process history.",
+)
 # Registrations
 plugin.register_semantic_types(
     mzML,
