@@ -20,9 +20,8 @@ requirements:
     - versioningit
 
   run:
-    - bioconductor-msexperiment
-    - bioconductor-spectra
     - bioconductor-xcms
+    - bioconductor-msexperiment
     - pymzml
     - qiime2 >={{ qiime2 }}
     - q2-types >={{ q2_types }}

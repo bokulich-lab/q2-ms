@@ -5,6 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import importlib
+
 from q2_types.sample_data import SampleData
 from qiime2.core.type import Bool, Choices, Float, Int, Properties, Range, Str, TypeMap
 from qiime2.plugin import Citations, Metadata, Plugin
@@ -67,7 +69,7 @@ plugin.methods.register_function(
 plugin.methods.register_function(
     function=read_ms_experiment,
     inputs={"spectra": SampleData[mzML]},
-    outputs=[("xcms_experiment", XCMSExperiment % Properties("Peaks"))],
+    outputs=[("xcms_experiment", XCMSExperiment)],
     parameters={"sample_metadata": Metadata},
     input_descriptions={"spectra": "Spectra data as mzML files."},
     output_descriptions={
@@ -270,3 +272,5 @@ plugin.register_formats(
     MatchedSpectraFormat,
     MatchedSpectraDirFmt,
 )
+
+importlib.import_module("q2_ms.types._validators")
