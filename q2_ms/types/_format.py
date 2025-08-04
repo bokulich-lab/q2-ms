@@ -49,8 +49,6 @@ class MSBackendDataFormat(model.TextFileFormat):
             "dataOrigin",
             "polarity",
             "peaksCount",
-            "totIonCurrent",
-            "basePeakMZ",
             "basePeakIntensity",
             "ionisationEnergy",
             "lowMZ",
