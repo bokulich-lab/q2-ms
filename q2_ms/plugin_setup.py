@@ -95,10 +95,10 @@ plugin.methods.register_function(
 
 collate_xcms_experiments_type_match = TypeMatch(
     [
-        XCMSExperiment,
+        XCMSExperiment % Properties("peaks", "MS2"),
         XCMSExperiment % Properties("peaks"),
         XCMSExperiment % Properties("MS2"),
-        XCMSExperiment % Properties("peaks", "MS2"),
+        XCMSExperiment,
     ]
 )
 
