@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from q2_types.sample_data import SampleData
-from qiime2.core.type import List
+from qiime2.core.type import List, Properties, TypeMatch
 from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
@@ -93,11 +93,20 @@ plugin.methods.register_function(
     ],
 )
 
+collate_xcms_experiments_type_match = TypeMatch(
+    [
+        XCMSExperiment,
+        XCMSExperiment % Properties("peaks"),
+        XCMSExperiment % Properties("MS2"),
+        XCMSExperiment % Properties("peaks", "MS2"),
+    ]
+)
+
 plugin.methods.register_function(
     function=collate_xcms_experiments,
-    inputs={"xcms_experiments": List[XCMSExperiment]},
+    inputs={"xcms_experiments": List[collate_xcms_experiments_type_match]},
     parameters={},
-    outputs={"collated_xcms_experiment": XCMSExperiment},
+    outputs={"collated_xcms_experiment": collate_xcms_experiments_type_match},
     input_descriptions={"xcms_experiments": "XCMSExperiment artifacts to collate"},
     parameter_descriptions={},
     name="Collate XCMSExperiment artifacts",
