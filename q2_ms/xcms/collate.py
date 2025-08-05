@@ -1,9 +1,31 @@
+import json
 import os
 import shutil
 
 import pandas as pd
 
 from q2_ms.types import XCMSExperimentDirFmt
+
+
+def _remove_dates_json(f):
+    """
+    Loads a JSON object from a file-like object and removes 'date' fields from each
+    processing step. this is done because dates do not have to match when collating.
+
+    Parameters:
+        f: A file-like object containing a JSON array with a stringified dictionary.
+
+    Returns:
+        dict: Parsed JSON with 'date' keys removed from known locations.
+    """
+    raw = json.load(f)
+    parsed = json.loads(raw[0])
+
+    # Remove the 'date' attribute from each step
+    for step in parsed["value"]:
+        step["attributes"].pop("date", None)
+
+    return parsed
 
 
 def _verify_and_copy_file(xcms_experiments, file_name, output_path):
@@ -27,7 +49,10 @@ def _verify_and_copy_file(xcms_experiments, file_name, output_path):
         file_paths.append(file_path)
 
         with open(file_path, "r", encoding="utf-8") as f:
-            contents.append(f.read())
+            if file_name == "xcms_experiment_process_history.json":
+                contents.append(_remove_dates_json(f))
+            else:
+                contents.append(f.read())
 
     reference = contents[0]
     for _id, content in enumerate(contents[1:], start=1):

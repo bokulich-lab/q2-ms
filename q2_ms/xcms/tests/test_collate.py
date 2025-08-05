@@ -15,6 +15,7 @@ from q2_ms.types import XCMSExperimentDirFmt
 from q2_ms.xcms.collate import (
     _check_headers,
     _read_table_and_index,
+    _remove_dates_json,
     _verify_and_copy_file,
     _write_with_preserved_header,
     collate_xcms_experiments,
@@ -92,6 +93,22 @@ class TestCollate(TestPluginBase):
             output_file = os.path.join(output_dir, "file.txt")
             self.assertTrue(os.path.exists(output_file))
 
+    def test_verify_and_copy_file_passes_process_history(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            _verify_and_copy_file(
+                [
+                    self.get_data_path("verify_and_copy_file/dir1"),
+                    self.get_data_path("verify_and_copy_file/dir2"),
+                ],
+                "xcms_experiment_process_history.json",
+                output_dir,
+            )
+
+            output_file = os.path.join(
+                output_dir, "xcms_experiment_process_history.json"
+            )
+            self.assertTrue(os.path.exists(output_file))
+
     def test_verify_and_copy_file_raises_value_error_on_mismatch(self):
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(ValueError, r".*file\.txt:.*file\.txt"):
@@ -149,3 +166,16 @@ class TestCollate(TestPluginBase):
         )
         with self.assertRaisesRegex(ValueError, expected_regex):
             _check_headers([df1, df2, df3], "file.txt")
+
+    def test_remove_dates_json(self):
+        test_file = self.get_data_path(
+            os.path.join(
+                "verify_and_copy_file", "dir1", "xcms_experiment_process_history.json"
+            )
+        )
+
+        with open(test_file, "r", encoding="utf-8") as f:
+            result = _remove_dates_json(f)
+
+        for step in result["value"]:
+            self.assertNotIn("date", step["attributes"])
