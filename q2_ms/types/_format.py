@@ -449,21 +449,6 @@ MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
 )
 
 
-# class MGFFileFormat(model.TextFileFormat):
-#     def _validate(self):
-#         try:
-#             sys.stdout = open(os.devnull, "w")
-#             mgf.read(str(self))
-#             sys.stdout = sys.__stdout__
-#         except Exception:
-#             raise ValidationError(
-#                 "At least one spectrum must be present, but none were found."
-#             )
-
-#     def _validate_(self, level):
-#         self._validate()
-
-
 class MGFFileFormat(model.TextFileFormat):
     def _validate(self):
         try:
