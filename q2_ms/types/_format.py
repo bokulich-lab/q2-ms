@@ -12,6 +12,7 @@ import sys
 
 import pandas as pd
 import pymzml
+from pyteomics import mgf
 from qiime2.core.exceptions import ValidationError
 from qiime2.plugin import model
 
@@ -446,3 +447,44 @@ class MatchedSpectraFormat(model.TextFileFormat):
 MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
     "MatchedSpectraDirFmt", "matched_spectra.txt", MatchedSpectraFormat
 )
+
+
+# class MGFFileFormat(model.TextFileFormat):
+#     def _validate(self):
+#         try:
+#             sys.stdout = open(os.devnull, "w")
+#             mgf.read(str(self))
+#             sys.stdout = sys.__stdout__
+#         except Exception:
+#             raise ValidationError(
+#                 "At least one spectrum must be present, but none were found."
+#             )
+
+#     def _validate_(self, level):
+#         self._validate()
+
+
+class MGFFileFormat(model.TextFileFormat):
+    def _validate(self):
+        try:
+            msms_data = mgf.read(str(self))
+
+            # Case where index exists but no spectra are found
+            if not isinstance(msms_data.get_by_index(0), dict):
+                raise ValidationError(
+                    "At least one spectrum must be present, but none were found."
+                )
+
+        except Exception:
+            raise ValidationError("Invalid MGF file.")
+
+    def _validate_(self, level):
+        self._validate()
+
+
+class MGFDirFormat(model.DirectoryFormat):
+    mgf_files = model.FileCollection(r".*\.mgf$", format=MGFFileFormat)
+
+    @mgf_files.set_path_maker
+    def mgf_path_maker(self, sample_id):
+        return f"{sample_id}.mzML"
