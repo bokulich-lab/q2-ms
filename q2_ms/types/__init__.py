@@ -8,6 +8,8 @@
 from q2_ms.types._format import (
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
+    MGFDirFormat,
+    MGFFileFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -24,7 +26,7 @@ from q2_ms.types._format import (
     mzMLDirFmt,
     mzMLFormat,
 )
-from q2_ms.types._type import MSP, MatchedSpectra, XCMSExperiment, mzML
+from q2_ms.types._type import MGF, MSP, MatchedSpectra, XCMSExperiment, mzML
 
 __all__ = [
     "mzMLFormat",
@@ -48,4 +50,9 @@ __all__ = [
     "MatchedSpectraFormat",
     "MatchedSpectraDirFmt",
     "MatchedSpectra",
+    "MGLFileFmt",
+    "MGLDirFmt",
+    "MGF",
+    "MGFFileFormat",
+    "MGFDirFormat",
 ]

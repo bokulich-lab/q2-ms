@@ -11,6 +11,8 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_ms.types._format import (
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
+    MGFDirFormat,
+    MGFFileFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -308,3 +310,20 @@ class TestMatchedSpectra(TestPluginBase):
             self.get_data_path("MatchedSpectra_valid"), mode="r"
         )
         format.validate()
+
+
+class TestMGFFormats(TestPluginBase):
+    package = "q2_ms.types.tests"
+
+    def test_mgf_dir_fmt_validate_positive(self):
+        format = MGFDirFormat(self.get_data_path("MGF_valid"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_validate_positive(self):
+        format = MGFFileFormat(self.get_data_path("MGF_valid/valid.mgf"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_validate_negative(self):
+        format = MGFFileFormat(self.get_data_path("MGF_invalid/invalid.mgf"), mode="r")
+        with self.assertRaises(ValidationError):
+            format.validate()
