@@ -12,7 +12,7 @@ from q2_ms.types._format import (
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
     MGFDirFormat,
-    MGFFileFormat,
+    MGFFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -320,10 +320,15 @@ class TestMGFFormats(TestPluginBase):
         format.validate()
 
     def test_mgf_file_fmt_validate_positive(self):
-        format = MGFFileFormat(self.get_data_path("MGF_valid/valid.mgf"), mode="r")
+        format = MGFFormat(self.get_data_path("MGF_valid/valid.mgf"), mode="r")
         format.validate()
 
-    def test_mgf_file_fmt_validate_negative(self):
-        format = MGFFileFormat(self.get_data_path("MGF_invalid/invalid.mgf"), mode="r")
-        with self.assertRaises(ValidationError):
+    def test_mgf_file_fmt_validate_negative_broken_spectra(self):
+        format = MGFFormat(self.get_data_path("MGF_invalid/invalid.mgf"), mode="r")
+        with self.assertRaisesRegex(ValidationError, "At least.*found."):
+            format.validate()
+
+    def test_mgf_file_fmt_validate_negative_empty(self):
+        format = MGFFormat(self.get_data_path("MGF_invalid/empty.mgf"), mode="r")
+        with self.assertRaisesRegex(ValidationError, "Invalid.*file."):
             format.validate()

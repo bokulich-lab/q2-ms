@@ -18,7 +18,7 @@ from q2_ms.types import (
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
     MGFDirFormat,
-    MGFFileFormat,
+    MGFFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -113,6 +113,7 @@ plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
 plugin.register_semantic_type_to_format(
     MatchedSpectra, artifact_format=MatchedSpectraDirFmt
 )
+plugin.register_semantic_type_to_format(MGF, artifact_format=MGFDirFormat)
 
 
 plugin.register_formats(
@@ -133,7 +134,7 @@ plugin.register_formats(
     MSPDirFmt,
     MatchedSpectraFormat,
     MatchedSpectraDirFmt,
-    MGFFileFormat,
+    MGFFormat,
     MGFDirFormat,
 )
 

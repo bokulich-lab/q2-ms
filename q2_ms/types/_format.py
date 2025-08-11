@@ -449,7 +449,7 @@ MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
 )
 
 
-class MGFFileFormat(model.TextFileFormat):
+class MGFFormat(model.TextFileFormat):
     def _validate(self):
         try:
             msms_data = mgf.read(str(self))
@@ -459,7 +459,8 @@ class MGFFileFormat(model.TextFileFormat):
                 raise ValidationError(
                     "At least one spectrum must be present, but none were found."
                 )
-
+        except ValidationError:
+            raise
         except Exception:
             raise ValidationError("Invalid MGF file.")
 
@@ -468,8 +469,8 @@ class MGFFileFormat(model.TextFileFormat):
 
 
 class MGFDirFormat(model.DirectoryFormat):
-    mgf_files = model.FileCollection(r".*\.mgf$", format=MGFFileFormat)
+    mgf_files = model.FileCollection(r".*\.mgf$", format=MGFFormat)
 
     @mgf_files.set_path_maker
-    def mgf_path_maker(self, sample_id):
-        return f"{sample_id}.mzML"
+    def mgf_path_maker(self, file_name):
+        return f"{file_name}.mgf"
