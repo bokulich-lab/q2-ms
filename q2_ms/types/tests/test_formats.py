@@ -319,6 +319,10 @@ class TestMGFFormats(TestPluginBase):
         format = MGFDirFormat(self.get_data_path("MGF_valid"), mode="r")
         format.validate()
 
+    def test_mgf_dir_fmt_path_maker_positive(self):
+        format = MGFDirFormat()
+        assert format.mgf_files._path_maker(format, "valid") == "valid.mgf"
+
     def test_mgf_file_fmt_validate_positive(self):
         format = MGFFormat(self.get_data_path("MGF_valid/valid.mgf"), mode="r")
         format.validate()
