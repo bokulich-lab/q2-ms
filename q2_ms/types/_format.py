@@ -452,10 +452,9 @@ MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
 class MGFFormat(model.TextFileFormat):
     def _validate(self):
         try:
-            msms_data = mgf.read(str(self))
-
-            # Case where index exists but no spectra are found
-            if not isinstance(msms_data.get_by_index(0), dict):
+            # Case when file is read without error but does not contain any spectra.
+            # When use_index=False, an unindexed MGF instance is created.
+            if next(mgf.read(str(self), use_index=False), None) is None:
                 raise ValidationError(
                     "At least one spectrum must be present, but none were found."
                 )
