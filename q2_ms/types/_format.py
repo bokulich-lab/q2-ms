@@ -460,7 +460,10 @@ class MGFFormat(model.TextFileFormat):
                 )
         except ValidationError:
             raise
-        except Exception:
+        except Exception:  # pragma: no cover
+            # coverage.py will ignore this part. Handles case where parsing fails.
+            # Currently, no tests are able to trigger such scenario, but code is kept
+            # to capture all types of parsing issues.
             raise ValidationError("Invalid MGF file.")
 
     def _validate_(self, level):
