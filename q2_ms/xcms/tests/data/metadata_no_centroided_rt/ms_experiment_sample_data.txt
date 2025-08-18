@@ -1,0 +1,5 @@
+"sample_name"	"sample_group"	"sample_type"	"spectraOrigin"
+"1"	"sample_1"	"KO"	"QC"	"path/sample_1.mzML"
+"2"	"sample_2"	"KO"	"study"	"path/sample_2.mzML"
+"3"	"sample_3"	"WT"	"QC"	"path/sample_3.mzML"
+"4"	"sample_4"	"WT"	"study"	"path/sample_4.mzML"
