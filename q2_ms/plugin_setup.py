@@ -64,7 +64,7 @@ plugin.methods.register_function(
     citations=[],
 )
 
-plugin.methods.register_function(
+plugin.pipelines.register_function(
     function=read_ms_experiment,
     inputs={"spectra": SampleData[mzML]},
     outputs=[("xcms_experiment", XCMSExperiment)],
