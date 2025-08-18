@@ -12,10 +12,13 @@ from qiime2.plugin import Citations, Metadata, Plugin
 
 from q2_ms import __version__
 from q2_ms.types import (
+    MGF,
     MSP,
     MatchedSpectra,
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
+    MGFDirFormat,
+    MGFFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -99,6 +102,7 @@ plugin.register_semantic_types(
     XCMSExperiment,
     MSP,
     MatchedSpectra,
+    MGF,
 )
 
 plugin.register_semantic_type_to_format(SampleData[mzML], artifact_format=mzMLDirFmt)
@@ -109,6 +113,7 @@ plugin.register_semantic_type_to_format(MSP, artifact_format=MSPDirFmt)
 plugin.register_semantic_type_to_format(
     MatchedSpectra, artifact_format=MatchedSpectraDirFmt
 )
+plugin.register_semantic_type_to_format(MGF, artifact_format=MGFDirFormat)
 
 
 plugin.register_formats(
@@ -129,6 +134,8 @@ plugin.register_formats(
     MSPDirFmt,
     MatchedSpectraFormat,
     MatchedSpectraDirFmt,
+    MGFFormat,
+    MGFDirFormat,
 )
 
 importlib.import_module("q2_ms.types._validators")
