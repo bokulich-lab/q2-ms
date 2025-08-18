@@ -23,6 +23,7 @@ requirements:
     - bioconductor-xcms
     - bioconductor-msexperiment
     - pymzml
+    - pyteomics
     - qiime2 >={{ qiime2 }}
     - q2-types >={{ q2_types }}
     - q2templates >={{ q2templates }}

@@ -12,6 +12,7 @@ import sys
 
 import pandas as pd
 import pymzml
+from pyteomics import mgf
 from qiime2.core.exceptions import ValidationError
 from qiime2.plugin import model
 
@@ -446,3 +447,32 @@ class MatchedSpectraFormat(model.TextFileFormat):
 MatchedSpectraDirFmt = model.SingleFileDirectoryFormat(
     "MatchedSpectraDirFmt", "matched_spectra.txt", MatchedSpectraFormat
 )
+
+
+class MGFFormat(model.TextFileFormat):
+    def _validate(self):
+        try:
+            # Case when file is read without error but does not contain any spectra.
+            # When use_index=False, an unindexed MGF instance is created.
+            if next(mgf.read(str(self), use_index=False), None) is None:
+                raise ValidationError(
+                    "At least one spectrum must be present, but none were found."
+                )
+        except ValidationError:
+            raise
+        except Exception:  # pragma: no cover
+            # coverage.py will ignore this part. Handles case where parsing fails.
+            # Currently, no tests are able to trigger such scenario, but code is kept
+            # to capture all types of parsing issues.
+            raise ValidationError("Invalid MGF file.")
+
+    def _validate_(self, level):
+        self._validate()
+
+
+class MGFDirFormat(model.DirectoryFormat):
+    mgf_files = model.FileCollection(r".*\.mgf$", format=MGFFormat)
+
+    @mgf_files.set_path_maker
+    def mgf_path_maker(self, file_name):
+        return f"{file_name}.mgf"

@@ -11,6 +11,8 @@ from qiime2.plugin.testing import TestPluginBase
 from q2_ms.types._format import (
     MatchedSpectraDirFmt,
     MatchedSpectraFormat,
+    MGFDirFormat,
+    MGFFormat,
     MSBackendDataFormat,
     MSExperimentLinkMColsFormat,
     MSExperimentSampleDataFormat,
@@ -308,3 +310,50 @@ class TestMatchedSpectra(TestPluginBase):
             self.get_data_path("MatchedSpectra_valid"), mode="r"
         )
         format.validate()
+
+
+class TestMGFFormats(TestPluginBase):
+    package = "q2_ms.types.tests"
+
+    def test_mgf_dir_fmt_validate_positive(self):
+        format = MGFDirFormat(self.get_data_path("MGF_valid"), mode="r")
+        format.validate()
+
+    def test_mgf_dir_fmt_path_maker_positive(self):
+        format = MGFDirFormat()
+        assert format.mgf_files._path_maker(format, "valid") == "valid.mgf"
+
+    def test_mgf_file_fmt_validate_positive(self):
+        format = MGFFormat(self.get_data_path("MGF_valid/valid.mgf"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_missing_title_validate_positive(self):
+        format = MGFFormat(self.get_data_path("MGF_valid/missing_title.mgf"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_missing_scans_validate_positive(self):
+        format = MGFFormat(self.get_data_path("MGF_valid/missing_scans.mgf"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_missing_scans_and_title_validate_positive(self):
+        format = MGFFormat(self.get_data_path("MGF_valid/missing_scans.mgf"), mode="r")
+        format.validate()
+
+    def test_mgf_file_fmt_missing_ions_block_validate_negative(self):
+        format = MGFFormat(
+            self.get_data_path("MGF_invalid/missing_ions_block.mgf"), mode="r"
+        )
+        with self.assertRaisesRegex(ValidationError, "At least.*found."):
+            format.validate()
+
+    def test_mgf_file_fmt_validate_negative_broken_spectra(self):
+        format = MGFFormat(
+            self.get_data_path("MGF_invalid/broken_spectra.mgf"), mode="r"
+        )
+        with self.assertRaisesRegex(ValidationError, "At least.*found."):
+            format.validate()
+
+    def test_mgf_file_fmt_validate_negative_empty(self):
+        format = MGFFormat(self.get_data_path("MGF_invalid/empty.mgf"), mode="r")
+        with self.assertRaisesRegex(ValidationError, "At least.*found."):
+            format.validate()
